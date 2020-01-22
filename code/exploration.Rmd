@@ -1,0 +1,60 @@
+---
+title: "kiwifruit graph theory"
+author: "Patrick Snelgar"
+date: "22/01/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+require(tidygraph)
+require(tidyverse)
+require(ggraph)
+```
+
+
+
+```{r}
+data <- read_csv("../input/test.csv") %>%
+	mutate(volume = pi*(diameter / 2) * length)
+
+sources <- data %>% 
+			distinct(from) %>%
+			rename(label = from)
+			
+dest <- data %>% 
+			distinct(to) %>%
+			rename(label = to)
+
+nodes <- full_join(sources, dest, by = "label")
+
+nodes$shoot <- sapply(seq_along(nodes$label), function(x) data$shoot[nodes$label[x] == data$to])
+
+
+```
+
+
+```{r display, echo=FALSE}
+
+structure <- tbl_graph(nodes =  nodes, edges = data)
+
+structure %>%
+	ggraph() +
+		geom_edge_link(aes(width = diameter)) +
+		geom_node_point(size = 3, colour = "red") +
+		theme_graph()
+
+ggsave("../output/graphs/B1W-structure.png", width = 12, height = 12)
+
+structure %>%
+	mutate(node_label = ifelse(shoot, "T", "F")) %>%
+	ggraph() +
+		geom_edge_link(aes(width = diameter)) +
+		geom_node_point(aes(colour = node_label), size = 3) +
+		geom_node_text(aes(label = label), repel = TRUE) +
+		theme_graph()
+
+ggsave("../output/graphs/B1W-structure-labels.png", width = 12, height = 12)
+```
+
