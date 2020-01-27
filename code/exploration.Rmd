@@ -11,13 +11,16 @@ knitr::opts_chunk$set(echo = TRUE)
 require(tidygraph)
 require(tidyverse)
 require(ggraph)
+require(magrittr)
 ```
 
 
 
 ```{r}
-data <- read_csv("../input/test.csv") %>%
-	mutate(volume = pi*(diameter / 2) * length)
+data <- read_csv("../input/kiwimac-test-modified.csv")  %>%
+	mutate(shoot_id = ifelse(!is.na(shoot_id), paste("1-", shoot_id, sep = ""), NA)) %>%
+	mutate(type = ifelse(!is.na(shoot_id), "Shoot", ifelse(!is.na(origin_id), "Origin", "Junction"))) %>%
+	mutate(origin_junction_id = ifelse(!is.na(origin_id), to, NA))
 
 sources <- data %>% 
 			distinct(from) %>%
@@ -27,10 +30,18 @@ dest <- data %>%
 			distinct(to) %>%
 			rename(label = to)
 
-nodes <- full_join(sources, dest, by = "label")
+nodes <- full_join(sources, dest, by = "label") %>% 
+			arrange(label)
 
-nodes$shoot <- sapply(seq_along(nodes$label), function(x) data$shoot[nodes$label[x] == data$to])
+nodes %<>% full_join(select(data, to, length, origin_id, shoot_id, type, base_origin_id, origin_junction_id), by = c("label" = "to"))
 
+nodes %<>% 
+	rename(node_type = type) %>%
+	mutate(node_type = factor(node_type, levels = c("Junction", "Shoot" , "Origin")), 
+		   base_origin_id = as.character(base_origin_id)) %>%
+	group_by(base_origin_id,) %>%
+	mutate(origin_junction_id = first(label)) %>%
+	ungroup()
 
 ```
 
@@ -40,21 +51,41 @@ nodes$shoot <- sapply(seq_along(nodes$label), function(x) data$shoot[nodes$label
 structure <- tbl_graph(nodes =  nodes, edges = data)
 
 structure %>%
+	filter(node_type != "character(0)") %>%
 	ggraph() +
-		geom_edge_link(aes(width = diameter)) +
-		geom_node_point(size = 3, colour = "red") +
+		geom_edge_link(colour = "gold3", width = 1.5) +
+		geom_node_point(aes(colour = node_type), size = 3.5) +
+		#geom_node_circle(aes(r = 0.1, fill = node_type)) + 
+		geom_node_text(aes(label = node_text),  repel = TRUE) +
+		scale_colour_manual(name = "Node Type", values = c("green3", "blue", "black")) +
 		theme_graph()
 
-ggsave("../output/graphs/B1W-structure.png", width = 12, height = 12)
+ggsave("../output/graphs/kiwimac-structure.png", width = 12, height = 12)
+
+```
+
+```{r metrics}
+
+structure %<>%
+	activate(nodes) %>%
+	mutate(cost_to_origin = node_distance_from(origin_junction_id, weights = length))
 
 structure %>%
-	mutate(node_label = ifelse(shoot, "T", "F")) %>%
-	ggraph() +
-		geom_edge_link(aes(width = diameter)) +
-		geom_node_point(aes(colour = node_label), size = 3) +
-		geom_node_text(aes(label = label), repel = TRUE) +
+	filter(node_type != "character(0)") %>%
+	mutate(node_text = ifelse(node_type == "Shoot", cost_to_origin, origin_id)) %>%
+	ggraph() + 
+		geom_edge_link(colour = "brown", width = 1.5) + 
+		geom_node_point(aes(colour = node_type), size = 4) + 
+		scale_color_manual(name = "Node Type", values = c("red", "blue", "black")) +
+		geom_node_text(aes(label = node_text), repel = TRUE) + 
 		theme_graph()
 
-ggsave("../output/graphs/B1W-structure-labels.png", width = 12, height = 12)
+ggsave("../output/graphs/kiwimac-path-lengths.png", width = 12, height = 12)
+
+structure %>%
+	activate(nodes) %>%
+	filter(node_type == "Shoot") %>%
+	select(shoot_id, cost_to_origin) %>%
+	as_data_frame() 
 ```
 
