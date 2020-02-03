@@ -222,7 +222,7 @@ vine_id,from,to,length,to_shoot_id,cane_id,diameter,to_origin_id,orientation,bas
 2,221,222,90,,,,,W,8,
 2,222,223,150,176,,,,W,8,
 2,224,218,60,,,,8,,8,
-2,218,225,20,,,,,E,9,
+2,224,225,20,,,,,E,9,
 2,225,226,100,,,,,E,9,
 2,226,227,80,177,,,,E,9,
 2,227,228,70,,,,,E,9,
@@ -273,7 +273,7 @@ vine_id,from,to,length,to_shoot_id,cane_id,diameter,to_origin_id,orientation,bas
 2,273,253,400,,,,10,,10,girdle to origin
 2,274,273,920,,,,,,,graft to girdle
 2,275,274,540,,,,,,,ground to graft
-2,275,276,910,,,,,,,graft to girdle
+2,274,276,910,,,,,,,graft to girdle
 2,276,277,370,,,,11,,11,girdle to origin
 2,277,278,140,,,,,E,11,
 2,278,279,120,,,,,E,11,
