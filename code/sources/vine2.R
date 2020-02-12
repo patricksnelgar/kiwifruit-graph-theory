@@ -26,31 +26,33 @@ vine2_nodes %<>%
 
 vine2_nodes %<>%
 	full_join(quadrant_info, by = c("quadrant" = "quadrant")) %>%
-	mutate(x_pos = (x + x_offset) * x_multiplier, y_pos = (y + y_offset) * y_multiplier) %>%
+	mutate(x_pos = (x + x_offset) * x_multiplier, y_pos = (y + y_offset) * y_multiplier *-1) #%>%
 	select(label:to_shoot_id, target_type, origin_target_id, x_pos, y_pos, to_origin_id)
 
 vine2_graph <- tbl_graph(vine2_nodes, vine2_data) %>%
 	activate(nodes) %>%
 	mutate(cost_to_origin = node_distance_from(origin_target_id, weights = length)) %>%
-	mutate(target_label = ifelse(!is.na(to_shoot_id), to_shoot_id, to_origin_id))
+	mutate(target_label = ifelse(!is.na(to_shoot_id), to_shoot_id, ifelse(!is.na(to_origin_id), to_origin_id, label)))
 
 
-ggraph(vine2_graph, 'tree') + 
+# ggraph(vine2_graph, 'tree') + 
+# 	geom_edge_link(colour = "brown") +
+# 	geom_node_point(aes(colour = target_type), size = 6) +
+# 	geom_node_text(aes(label = target_label, colour = target_type), repel = TRUE) +
+# 	ggtitle("Kiwimac - Vine 2 architecture") + 
+# 	theme_graph() +
+# 	theme(text = element_text(size = 14), title = element_text(size = 18))
+# 
+# ggsave("output/graphs/kiwimac_vine2.png", width = 35, height = 20)
+
+
+ggraph(vine2_graph, layout = "manual", x = vine2_nodes$x_pos, y = vine2_nodes$y_pos) +
 	geom_edge_link(colour = "brown") +
-	geom_node_point(aes(colour = target_type), size = 6) +
-	geom_node_text(aes(label = target_label, colour = target_type), repel = TRUE) +
-	ggtitle("Kiwimac - Vine 2 architecture") + 
-	theme_graph() +
-	theme(text = element_text(size = 14), title = element_text(size = 18))
-
-ggsave("output/graphs/kiwimac_vine2.png", width = 35, height = 20)
-
-
-ggraph(vine2_graph, layout = "manual", x = vine2_nodes$y_pos, y = vine2_nodes$x_pos) +
-	geom_edge_link(colour = "brown") +
-	geom_node_point(aes(colour = target_type), size = 6) + 
+	geom_node_point(aes(colour = target_type), size = 3) + 
 	geom_node_text(aes(label = target_label, colour = target_type), repel = TRUE) +
 	ggtitle("2D layout - Vine 2") +
+	geom_hline(yintercept = c(-2000, -1000, 0, 1000, 2000))+
+	geom_vline(xintercept = c(-1000, -500, 0, 500, 1000)) +
 	theme_graph()
 
 ggsave("output/graphs/kiwimac_vine2_layout.png", width = 30, height = 30)
