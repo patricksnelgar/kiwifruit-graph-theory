@@ -12,85 +12,15 @@ require(tidygraph)
 require(tidyverse)
 require(ggraph)
 require(magrittr)
+require(igraph)
 ```
 
+```{r data-import, echo=FALSE}
 
+quadrant_info <- read_csv("input/quadrant-info.csv")
 
-```{r}
-data <- read_csv("../input/kiwimac-test-modified.csv")  %>%
-	mutate(shoot_id = ifelse(!is.na(shoot_id), paste("1_", shoot_id, sep = ""), NA)) %>%
-	mutate(type = ifelse(!is.na(shoot_id), "Shoot", ifelse(!is.na(origin_id), "Origin", "Junction"))) %>%
-	mutate(origin_junction_id = ifelse(!is.na(origin_id), to, NA))
-
-sources <- data %>% 
-			distinct(from) %>%
-			rename(label = from)
-			
-dest <- data %>% 
-			distinct(to) %>%
-			rename(label = to)
-
-nodes <- full_join(sources, dest, by = "label") %>% 
-			arrange(label)
-
-nodes %<>% full_join(select(data, to, length, origin_id, shoot_id, type, base_origin_id, origin_junction_id), by = c("label" = "to"))
-
-nodes %<>% 
-	rename(node_type = type) %>%
-	mutate(node_type = factor(node_type, levels = c("Junction", "Shoot" , "Origin")), 
-		   base_origin_id = as.character(base_origin_id)) %>%
-	group_by(base_origin_id,) %>%
-	mutate(origin_junction_id = first(label)) %>%
-	ungroup()
 
 ```
-
-
-```{r display, echo=FALSE}
-
-structure <- tbl_graph(nodes =  nodes, edges = data)
-
-structure %>%
-	filter(node_type != "character(0)") %>%
-	ggraph() +
-		geom_edge_link(colour = "gold3", width = 1.5) +
-		geom_node_point(aes(colour = node_type), size = 3.5) +
-		#geom_node_circle(aes(r = 0.1, fill = node_type)) + 
-		geom_node_text(aes(label = node_text),  repel = TRUE) +
-		scale_colour_manual(name = "Node Type", values = c("green3", "blue", "black")) +
-		theme_graph()
-
-ggsave("../output/graphs/kiwimac-structure.png", width = 12, height = 12)
-
-```
-
-```{r metrics}
-
-structure %<>%
-	activate(nodes) %>%
-	mutate(cost_to_origin = node_distance_from(origin_junction_id, weights = length))
-
-structure %>%
-	filter(node_type != "character(0)") %>%
-	mutate(node_text = ifelse(node_type == "Shoot", cost_to_origin, origin_id)) %>%
-	ggraph() + 
-		geom_edge_link(colour = "brown", width = 1.5) + 
-		geom_node_point(aes(colour = node_type), size = 4) + 
-		scale_color_manual(name = "Node Type", values = c("red", "blue", "black")) +
-		geom_node_text(aes(label = node_text), repel = TRUE) + 
-		theme_graph() + 
-		annotate("text", x = 0, y = 0.25, label = "shoot labels are path \nto origin cost")
-
-ggsave("../output/graphs/kiwimac-path-lengths.png", width = 12, height = 12)
-
-structure %>%
-	activate(nodes) %>%
-	filter(node_type == "Shoot") %>%
-	select(shoot_id, cost_to_origin) %>%
-	as_data_frame() %>%
-	write_csv("../output/shoot_to_origin_cost.csv")
-```
-
 
 ```{r vine1-tidying, echo=FALSE}
 
@@ -187,6 +117,7 @@ ggraph(vine2_graph) +
 	theme(text = element_text(size = 14), title = element_text(size = 18))
 
 ggsave("../output/graphs/kiwimac_vine2.png", width = 35, height = 20)
+
 ```
 
 ```{r vine3-tidying, echo=FALSE}
@@ -226,14 +157,64 @@ vine3_graph <- tbl_graph(vine3_nodes, vine3_data) %>%
 				mutate(target_label = ifelse(!is.na(to_shoot_id), to_shoot_id, to_origin_id))
 
 
-ggraph(vine3_graph) + 
+ggraph(vine3_graph, layout = "tree") + 
 	geom_edge_link(colour = "brown") +
 	geom_node_point(aes(colour = target_type), size = 6) +
-	geom_node_text(aes(label = target_label, colour = target_type), repel = TRUE) +
+	geom_node_text(aes(label = target_label, colour = target_type), repel = TRUE, size = 6) +
 	ggtitle("Kiwimac - Vine 3 architecture") + 
 	theme_graph() +
 	theme(text = element_text(size = 14), title = element_text(size = 18))
 
-ggsave("../output/graphs/kiwimac_vine3.png", width = 35, height = 20)
+ggsave("../output/graphs/kiwimac_vine3.png", width = 49, height = 20)
+```
+
+
+```{r vine4-tidying, echo=FALSE}
+
+vine4_data <- read_csv("../input/kiwimac_data_vine4.csv") %>%
+				mutate(to_shoot_id = ifelse(!is.na(to_shoot_id), paste(vine_id, to_shoot_id, sep = "-"), NA),
+					   cane_id = ifelse(!is.na(cane_id), paste(vine_id, cane_id, sep = "-"), NA),
+					   to_origin_id = ifelse(!is.na(to_origin_id), paste(vine_id, to_origin_id, sep = "-"), NA),
+					   base_origin_id = ifelse(!is.na(base_origin_id), paste(vine_id, base_origin_id, sep = "-"), NA))
+
+vine4_sources <- vine4_data %>%
+					distinct(from) %>%
+					rename(label = from)
+
+vine4_targets <- vine4_data %>%
+					distinct(to) %>%
+					rename(label = to)
+
+vine4_nodes <- full_join(vine4_sources, vine4_targets, by = "label") %>%
+				arrange(label) %>%
+				full_join(select(vine4_data, to, length, to_shoot_id, cane_id, to_origin_id, base_origin_id, notes), by = c("label" = "to"))
+
+vine4_nodes %<>% 
+	mutate(target_type = ifelse(!is.na(to_shoot_id), "Shoot", ifelse(!is.na(to_origin_id), "Origin","Junction"))) %>%
+	mutate(target_type = factor(target_type, levels = c("Shoot", "Origin", "Junction"))) %>%
+	group_by(base_origin_id) %>%
+	mutate(origin_target_id = first(label)) %>%
+	ungroup()
+
+```
+
+```{r, vine4_viz, echo=FALSE}
+
+vine4_graph <- tbl_graph(vine4_nodes, vine4_data) %>%
+				activate(nodes) %>%
+				mutate(cost_to_origin = node_distance_from(origin_target_id, weights = length)) %>%
+				mutate(target_label = ifelse(!is.na(to_shoot_id), to_shoot_id, to_origin_id))
+
+
+
+ggraph(vine4_graph) + 
+	geom_edge_link(colour = "brown") +
+	geom_node_point(aes(colour = target_type), size = 6) +
+	geom_node_text(aes(label = target_label, colour = target_type), repel = TRUE, size = 6) +
+	ggtitle("Kiwimac - Vine 4 architecture") + 
+	theme_graph() +
+	theme(text = element_text(size = 14), title = element_text(size = 18))
+
+ggsave("../output/graphs/kiwimac_vine4.png", width = 49, height = 20)
 ```
 
