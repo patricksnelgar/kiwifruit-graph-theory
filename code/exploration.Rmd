@@ -19,7 +19,7 @@ require(ggforce)
 
 ```{r data-import, echo=FALSE}
 
-quadrant_info <- read_csv("input/quadrant-info.csv")
+quadrant_info <- read_csv("../input/quadrant-info.csv")
 
 ```
 
