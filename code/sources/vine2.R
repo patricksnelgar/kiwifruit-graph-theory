@@ -57,3 +57,6 @@ ggraph(vine2_graph, layout = "manual", x = vine2_nodes$y_pos, y = vine2_nodes$x_
 	
 
 ggsave("output/graphs/kiwimac_vine2_layout.png", width = 20, height = 20)
+
+
+

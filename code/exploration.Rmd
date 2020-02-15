@@ -1,7 +1,7 @@
 ---
 title: "kiwifruit graph theory"
 author: "Patrick Snelgar"
-date: "22/01/2020"
+date: "`r { format(Sys.Date()"
 output: html_document
 ---
 
@@ -13,6 +13,8 @@ require(tidyverse)
 require(ggraph)
 require(magrittr)
 require(igraph)
+require(gganimate)
+require(ggforce)
 ```
 
 ```{r data-import, echo=FALSE}
