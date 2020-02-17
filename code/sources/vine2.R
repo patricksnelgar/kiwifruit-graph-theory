@@ -46,7 +46,9 @@ ggraph(vine2_graph, 'tree') +
 ggsave("output/graphs/kiwimac_vine2.png", width = 35, height = 20)
 
 
-ggraph(vine2_graph, layout = "manual", x = vine2_nodes$y_pos, y = vine2_nodes$x_pos) +
+
+
+ggraph(vine2_graph, layout = "manual", x, y) +
 	geom_edge_link(colour = "brown") +
 	geom_node_point(aes(colour = target_type), size = 5) + 
 	geom_node_text(aes(label = target_label), colour = "black", repel = TRUE) +
