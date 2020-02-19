@@ -26,7 +26,7 @@ vine1_nodes %<>%
 
 vine1_nodes %<>%
 	full_join(quadrant_info, by = c("quadrant" = "quadrant")) %>%
-	mutate(x_pos = (x + x_offset) * x_multiplier, y_pos = (y + y_offset) * y_multiplier * -1) %>%
+	mutate(x_pos = (x + x_offset) * x_multiplier, y_pos = (y + y_offset) * y_multiplier) %>%
 	select(label:to_shoot_id, target_type, origin_target_id, x_pos, y_pos, to_origin_id) %>%
 	filter(!is.na(label))
 

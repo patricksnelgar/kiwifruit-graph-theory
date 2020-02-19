@@ -271,7 +271,7 @@ vine_id,from,to,length,to_shoot_id,spur,cane_id,x,y,quadrant,diameter,to_origin_
 2,270,271,70,217,,5,90,490,19,,,W,10,
 2,271,272,90,218,,5,90,560,19,,,W,10,
 2,273,253,400,,,,230,20,15,,10,,10,girdle to origin
-2,274,273,920,,,,20,20,16,,,,,graft to girdle
+2,274,273,920,,,,20,20,16,,trunk,,,graft to girdle
 2,275,274,540,,,,0,0,16,,,,,ground to graft
 2,274,276,910,,,,90,50,22,,,,,graft to girdle
 2,276,277,370,,,,360,60,22,,11,,11,girdle to origin

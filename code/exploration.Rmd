@@ -14,12 +14,16 @@ require(ggraph)
 require(magrittr)
 require(igraph)
 require(gganimate)
+require(visNetwork)
+require(networkD3)
+require(htmlwidgets)
 require(plotly)
+require(ggnetwork)
 ```
 
 ```{r data-import, echo=FALSE}
 
-quadrant_info <- read_csv("../input/quadrant-info.csv")
+quadrant_info <- read_csv("input/quadrant-info.csv")
 
 quadrant_labels <- data.frame(x = rep(c(-1250, -750, -250, 250, 750, 1250), each = 6),
 							  y = rep(c(2500, 1500, 500, -500, -1500, -2500), 6),
