@@ -8,17 +8,16 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
+
 require(tidygraph)
 require(tidyverse)
 require(ggraph)
 require(magrittr)
 require(igraph)
 require(gganimate)
-require(visNetwork)
-require(networkD3)
 require(htmlwidgets)
 require(plotly)
-require(ggnetwork)
+require(gganimate)
 ```
 
 ```{r data-import, echo=FALSE}
@@ -30,12 +29,31 @@ quadrant_labels <- data.frame(x = rep(c(-1250, -750, -250, 250, 750, 1250), each
 							  label = 1:36)
 
 ```
+```{r vine2_fake_data}
+#' Create list of only shoot IDs
+#'  then generate random # of fruit per shoot 9inc 0's)
+#' temp_rep is used to keep the shoot id when generating the fruit data frame 
+#'  so it keeps ALL shoot ids even if there is 'no' fruit on that shoot
+shoot_data <- vine2_data %>%
+				filter(!is.na(to_shoot_id)) %>%
+				select(to_shoot_id) %>%
+				mutate(num_fruit = as.integer(runif(length(to_shoot_id), 0, 6))) %>%
+				mutate(temp_rep = replace(num_fruit, which(num_fruit == 0), 1))
+				
 
+fruit_data <- shoot_data[rep(row.names(shoot_data), shoot_data$temp_rep), 1:2] %>%
+				mutate(fruit_id = ifelse(num_fruit != 0, paste("2-", 1:length(to_shoot_id)), NA)) %>%
+				mutate(dm = ifelse(num_fruit > 0, runif(length(!is.na(fruit_id)), 16,19), NA)) %>%
+				mutate(fw = ifelse(num_fruit > 0, runif(length(!is.na(fruit_id)), 120, 150), NA))
+```
 ```{r vine1, echo=FALSE}
 
 source("./sources/vine1.R")
 
 ```
+<!--
+vine1.Rmd
+-->
 
 ```{r vine2, echo=FALSE}
 
