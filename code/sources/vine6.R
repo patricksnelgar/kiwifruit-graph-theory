@@ -15,7 +15,7 @@ vine6_targets <- vine6_data %>%
 
 vine6_nodes <- full_join(vine6_sources, vine6_targets, by = "label") %>%
 	arrange(label) %>%
-	full_join(select(vine6_data, to, length, to_shoot_id, cane_id, to_origin_id, base_origin_id, notes), by = c("label" = "to"))
+	full_join(select(vine6_data, to, length, to_shoot_id, x, y, quadrant, cane_id, to_origin_id, base_origin_id, notes), by = c("label" = "to"))
 
 vine6_nodes %<>% 
 	mutate(target_type = ifelse(!is.na(to_shoot_id), "Shoot", ifelse(!is.na(to_origin_id), "Origin","Junction"))) %>%
@@ -24,12 +24,16 @@ vine6_nodes %<>%
 	mutate(origin_target_id = first(label)) %>%
 	ungroup()
 
+vine6_nodes %<>%
+	full_join(quadrant_info, by = c("quadrant" = "quadrant")) %>%
+	mutate(x_pos = (x + x_offset) * x_multiplier, y_pos = (y + y_offset) * y_multiplier*-1) %>%
+	select(label:to_shoot_id, target_type, origin_target_id, x_pos, y_pos, to_origin_id) %>%
+	filter(!is.na(label))
 
 vine6_graph <- tbl_graph(vine6_nodes, vine6_data) %>%
 	activate(nodes) %>%
 	mutate(cost_to_origin = node_distance_from(origin_target_id, weights = length)) %>%
 	mutate(target_label = ifelse(!is.na(to_shoot_id), to_shoot_id, to_origin_id))
-
 
 ggraph(vine6_graph, layout = "tree") + 
 	geom_edge_link(colour = "brown") +
@@ -40,3 +44,19 @@ ggraph(vine6_graph, layout = "tree") +
 	theme(text = element_text(size = 14), title = element_text(size = 18))
 
 ggsave("output/graphs/kiwimac_vine6.png", width = 49, height = 20)
+
+
+ggraph(vine6_graph, layout = "manual", x = vine6_nodes$x_pos, y = vine6_nodes$y_pos) +
+	geom_edge_link(colour = "brown") +
+	geom_node_point(aes(colour = target_type), size = 5) + 
+	geom_node_text(aes(label = target_label), colour = "black", repel = TRUE) +
+	ggtitle("2D layout - Vine 6") +
+	#geom_text(x = 0, y = 1750, label = "N", size = 14) +
+	#geom_text(x = 0, y = -1700, label = "S", size = 14) +
+	geom_vline(xintercept = c(-1000, -500, 0, 500, 1000)) +
+	geom_hline(yintercept = c(-2000, -1000, 0, 1000, 2000)) +
+	geom_text(aes(x = x, y = y, label = label), data = quadrant_labels, size = 14) +
+	theme_graph()
+
+
+ggsave("output/graphs/kiwimac_vine6_layout.png", width = 20, height = 20)

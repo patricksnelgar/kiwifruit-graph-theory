@@ -26,7 +26,7 @@ vine5_nodes %<>%
 
 vine5_nodes %<>%
 	full_join(quadrant_info, by = c("quadrant" = "quadrant")) %>%
-	mutate(x_pos = (x + x_offset) * x_multiplier, y_pos = (y + y_offset) * y_multiplier*-1) %>%
+	mutate(x_pos = (x + x_offset) * x_multiplier, y_pos = (y + y_offset) * y_multiplier) %>%
 	select(label:to_shoot_id, target_type, origin_target_id, x_pos, y_pos, to_origin_id) %>%
 	filter(!is.na(label))
 
@@ -46,16 +46,13 @@ ggraph(vine5_graph, layout = "tree") +
 ggsave("output/graphs/kiwimac_vine5.png", width = 49, height = 20)
 
 
-ggraph(vine5_graph, layout = "manual", x = vine5_nodes$x_pos, y = vine5_nodes$y_pos) +
+ggraph(vine5_graph, layout = "manual", x = vine5_nodes$y_pos, y = vine5_nodes$x_pos) +
 	geom_edge_link(colour = "brown") +
 	geom_node_point(aes(colour = target_type), size = 5) + 
 	geom_node_text(aes(label = target_label), colour = "black", repel = TRUE) +
 	ggtitle("2D layout - Vine 5") +
-	#geom_text(x = 0, y = 1750, label = "N", size = 14) +
-	#geom_text(x = 0, y = -1700, label = "S", size = 14) +
-	geom_vline(xintercept = c(-1000, -500, 0, 500, 1000)) +
-	geom_hline(yintercept = c(-2000, -1000, 0, 1000, 2000)) +
-	geom_text(aes(x = x, y = y, label = label), data = quadrant_labels, size = 14) +
+	geom_text(x = 0, y = 1800, label = "N", size = 14) +
+	geom_text(x = 0, y = -2350, label = "S", size = 14) +
 	theme_graph()
 
 

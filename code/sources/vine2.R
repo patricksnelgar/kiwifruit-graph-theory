@@ -40,7 +40,7 @@ ggraph(vine2_graph, layout = "manual", x = vine2_nodes$y_pos, y = vine2_nodes$x_
 	geom_node_text(aes(label = target_label), colour = "black", repel = TRUE) +
 	ggtitle("2D layout - Vine 2") +
 	geom_text(x = 0, y = 1750, label = "N", size = 14) +
-	geom_text(x = 0, y = -1700, label = "S", size = 14) +
+	geom_text(x = 0, y = -1690, label = "S", size = 14) +
 	theme_graph()
 
 ggsave("output/graphs/kiwimac_vine2_layout.png", width = 20, height = 20)

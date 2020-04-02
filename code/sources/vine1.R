@@ -35,16 +35,13 @@ vine1_graph <- tbl_graph(vine1_nodes, vine1_data) %>%
 	mutate(cost_to_origin = node_distance_from(origin_target_id, weights = length)) %>%
 	mutate(target_label = ifelse(!is.na(to_shoot_id), to_shoot_id, ifelse(!is.na(to_origin_id), to_origin_id, label)))
 
-ggraph(vine1_graph, layout = "manual", x = vine1_nodes$x_pos, y = vine1_nodes$y_pos) +
+ggraph(vine1_graph, layout = "manual", x = vine1_nodes$y_pos, y = vine1_nodes$x_pos) +
 	geom_edge_link(colour = "brown") +
 	geom_node_point(aes(colour = target_type), size = 5) + 
 	geom_node_text(aes(label = target_label), colour = "black", repel = TRUE) +
 	ggtitle("2D layout - Vine 1") +
-	#geom_text(x = 0, y = 1750, label = "N", size = 14) +
-	#geom_text(x = 0, y = -1700, label = "S", size = 14) +
-	geom_vline(xintercept = c(-1000, -500, 0, 500, 1000)) +
-	geom_hline(yintercept = c(-2000, -1000, 0, 1000, 2000)) +
-	geom_text(aes(x = x, y = y, label = label), data = quadrant_labels, size = 14) +
+	geom_text(x = 0, y = 1750, label = "N", size = 14) +
+	geom_text(x = 0, y = -1690, label = "S", size = 14) +
 	theme_graph()
 
 
