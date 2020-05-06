@@ -9,25 +9,27 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 
-require(tidygraph)
-require(tidyverse)
-require(ggraph)
-require(magrittr)
-require(igraph)
-require(gganimate)
-require(htmlwidgets)
-require(plotly)
+library(tidygraph)
+library(tidyverse)
+library(ggraph)
+library(magrittr)
+library(igraph)
+library(gganimate)
+library(htmlwidgets)
+library(plotly)
+library(ggplot2)
 ```
 
 ```{r data-import, echo=FALSE}
 
-quadrant_info <- read_csv("../input/quadrant-info.csv")
+quadrant_info <- read_csv("./input/quadrant-info.csv")
 
 quadrant_labels <- data.frame(x = rep(c(-1250, -750, -250, 250, 750, 1250), each = 6),
 							  y = rep(c(2500, 1500, 500, -500, -1500, -2500), 6),
 							  label = 1:36)
 
 ```
+
 ```{r vine2_fake_data}
 #' Create list of only shoot IDs
 #'  then generate random # of fruit per shoot 9inc 0's)
@@ -45,6 +47,7 @@ fruit_data <- shoot_data[rep(row.names(shoot_data), shoot_data$temp_rep), 1:2] %
 				mutate(dm = ifelse(num_fruit > 0, runif(length(!is.na(fruit_id)), 16,19), NA)) %>%
 				mutate(fw = ifelse(num_fruit > 0, runif(length(!is.na(fruit_id)), 120, 150), NA))
 ```
+
 ```{r vine1, echo=FALSE}
 
 source("./sources/vine1.R")

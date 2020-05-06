@@ -5,6 +5,11 @@ vine4_data <- read_csv("input/kiwimac_data_vine4.csv") %>%
 		   to_origin_id = ifelse(!is.na(to_origin_id), paste(vine_id, to_origin_id, sep = "-"), NA),
 		   base_origin_id = ifelse(!is.na(base_origin_id), paste(vine_id, base_origin_id, sep = "-"), NA))
 
+vine4_fruit_data <- read_csv("input/fruit_data_vine4.csv") %>%
+						select(FruitID:Height, FrtWt:DM) %>%
+						mutate(shoot_id = paste("4", ShootID, sep = "-"))
+						
+
 vine4_sources <- vine4_data %>%
 	distinct(from) %>%
 	rename(label = from)
@@ -15,7 +20,7 @@ vine4_targets <- vine4_data %>%
 
 vine4_nodes <- full_join(vine4_sources, vine4_targets, by = "label") %>%
 	arrange(label) %>%
-	full_join(select(vine4_data, to, length, to_shoot_id, x, y, quadrant, cane_id, to_origin_id, base_origin_id, notes), by = c("label" = "to"))
+	full_join(select(vine4_data, to, length, to_shoot_id, x, y, quadrant, diameter, cane_id, to_origin_id, base_origin_id, notes), by = c("label" = "to"))
 
 vine4_nodes %<>% 
 	mutate(target_type = ifelse(!is.na(to_shoot_id), "Shoot", ifelse(!is.na(to_origin_id), "Origin","Junction"))) %>%
@@ -27,8 +32,53 @@ vine4_nodes %<>%
 vine4_nodes %<>%
 	full_join(quadrant_info, by = c("quadrant" = "quadrant")) %>%
 	mutate(x_pos = (x + x_offset) * x_multiplier, y_pos = (y + y_offset) * y_multiplier) %>%
-	select(label:to_shoot_id, target_type, origin_target_id, x_pos, y_pos, to_origin_id) %>%
+	select(label:to_shoot_id, target_type, origin_target_id, x_pos, y_pos, diameter, to_origin_id) %>%
 	filter(!is.na(label))
+
+vine4_links <- vine4_data %>%
+	select(from, to) %>%
+	full_join(select(vine4_nodes, label, x_pos, y_pos), by = c("from" = "label")) %>%
+	rename(xstart = x_pos, ystart = y_pos) %>%
+	full_join(vine4_nodes, by = c("to" = "label")) %>%
+	rename(xend = x_pos, yend = y_pos) 
+
+vine4_fruit_data %<>%
+	left_join(., select(vine4_links, to_shoot_id, xend, yend), by = c("shoot_id" = "to_shoot_id"))
+
+vine4_fruit_dm <- ggplot(filter(vine4_links, !is.na(to))) +
+					geom_segment(aes(x = ystart, y = xstart, xend = yend, yend = xend, size = diameter), colour = "lightgrey")+
+					geom_point(aes(x = yend, y = xend, fill = target_type), 
+							   data = filter(vine4_links, !is.na(to) & target_type == "Shoot"),
+							   shape = 21, 
+							   size = 4) + 
+					scale_fill_manual(name = "target_type", 
+									  labels = c("Shoot", "Origin", "Junction"),
+									  values = c("Shoot" = "black", "Origin" = "green", "Junction" = "blue"))  +
+					geom_jitter(aes(yend, xend, colour = DM), 
+								data = vine4_fruit_data, 
+								alpha = 0.5, 
+								size = 4,
+								width = 10,
+								height = 70) +
+					scale_colour_gradient2(name = 'DM', low = "blue", mid = "orange", high = "red", midpoint = 16) +
+					guides(size = FALSE) +
+					ggtitle("Kiwimac Vine4 - DM heatmap") +
+					theme_bw() + 
+					theme(plot.title = element_text(size = 22, hjust = 0.5))
+
+
+vine4_interactive_fruit <- ggplotly(vine4_fruit_dm)
+
+# Fruit data points
+vine4_interactive_fruit$x$data[[483]]$text <- paste("FruitID: ", vine4_fruit_data$FruitID, 
+													"\nFW: ", vine4_fruit_data$FrtWt,
+													"\nDM: ", vine4_fruit_data$DM)
+# shoot data
+vine4_interactive_fruit$x$data[[482]]$text <- paste("Shoot ID: ",
+													filter(vine4_links, target_type == "Shoot")$to_shoot_id)
+
+# Fucking stupid, excpects full path, cant do relative WHY???
+saveWidget(vine4_interactive_fruit, "kiwimac_vine4_interactive.html", selfcontained = TRUE)
 
 vine4_graph <- tbl_graph(vine4_nodes, vine4_data) %>%
 	activate(nodes) %>%
