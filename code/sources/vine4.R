@@ -43,25 +43,31 @@ vine4_links <- vine4_data %>%
 	rename(xend = x_pos, yend = y_pos) 
 
 vine4_fruit_data %<>%
-	left_join(., select(vine4_links, to_shoot_id, xend, yend), by = c("shoot_id" = "to_shoot_id"))
+	left_join(., select(vine4_links, to_shoot_id, xend, yend), by = c("shoot_id" = "to_shoot_id")) 
+
+vine4_fruit_data %<>%
+	mutate(taste_bin = cut(DM, c(0, 16.1, 17.4, 17.9, Inf), include.lowest = TRUE, labels = c("Under MTS", "M band", "T band", "Y band")))
 
 vine4_fruit_dm <- ggplot(filter(vine4_links, !is.na(to))) +
 					geom_segment(aes(x = ystart, y = xstart, xend = yend, yend = xend, size = diameter), colour = "lightgrey")+
-					geom_point(aes(x = yend, y = xend, fill = target_type), 
+					geom_point(aes(x = yend, y = xend, colour = target_type), 
 							   data = filter(vine4_links, !is.na(to) & target_type == "Shoot"),
-							   shape = 21, 
+							   shape = 19, 
 							   size = 4) + 
-					scale_fill_manual(name = "target_type", 
-									  labels = c("Shoot", "Origin", "Junction"),
-									  values = c("Shoot" = "black", "Origin" = "green", "Junction" = "blue"))  +
-					geom_jitter(aes(yend, xend, colour = DM), 
-								data = vine4_fruit_data, 
-								alpha = 0.5, 
+					scale_colour_manual(name = "target_type", 
+									  	labels = c("Shoot", "Origin", "Junction"),
+										values = c("Shoot" = "dimgrey")) +
+					geom_jitter(aes(yend, xend, fill = taste_bin), 
+								data = filter(vine4_fruit_data, !is.na(taste_bin)), 
+								alpha = 0.8, 
 								size = 4,
 								width = 10,
-								height = 70) +
-					scale_colour_gradient2(name = 'DM', low = "blue", mid = "orange", high = "red", midpoint = 16) +
-					guides(size = FALSE) +
+								height = 70,
+								shape = 21) +
+					scale_fill_manual(name = "Zespri Taste bands",
+									  values = c("steelblue2", "plum", "springgreen3", "tomato2"), 
+									  labels = c("Under MTS", "M band", "T band", "Y band")) +
+					guides(size = FALSE, colour = FALSE) +
 					ggtitle("Kiwimac Vine4 - DM heatmap") +
 					theme_bw() + 
 					theme(plot.title = element_text(size = 22, hjust = 0.5))
@@ -70,12 +76,39 @@ vine4_fruit_dm <- ggplot(filter(vine4_links, !is.na(to))) +
 vine4_interactive_fruit <- ggplotly(vine4_fruit_dm)
 
 # Fruit data points
-vine4_interactive_fruit$x$data[[483]]$text <- paste("FruitID: ", vine4_fruit_data$FruitID, 
-													"\nFW: ", vine4_fruit_data$FrtWt,
-													"\nDM: ", vine4_fruit_data$DM)
+vine4_interactive_fruit$x$data[[483]]$text <- vine4_fruit_data %>%
+												filter(taste_bin == "Under MTS") %$%
+												paste0("FruitID: ", FruitID, 
+													"\nFW: ", FrtWt, "g",
+													"\nDM: ", DM, "%")
+# Fruit data points
+vine4_interactive_fruit$x$data[[484]]$text <- vine4_fruit_data %>%
+												filter(taste_bin == "M band") %$%
+												paste0("FruitID: ", FruitID, 
+													  "\nFW: ", FrtWt, "g",
+													  "\nDM: ", DM, "%")
+# Fruit data points
+vine4_interactive_fruit$x$data[[485]]$text <- vine4_fruit_data %>%
+												filter(taste_bin == "T band") %$%
+												paste0("FruitID: ", FruitID, 
+													  "\nFW: ", FrtWt, "g",
+													  "\nDM: ", DM, "%")
+# Fruit data points
+vine4_interactive_fruit$x$data[[486]]$text <- vine4_fruit_data %>%
+												filter(taste_bin == "Y band") %$%
+												paste0("FruitID: ", FruitID, 
+													  "\nFW: ", FrtWt, "g",
+													  "\nDM: ", DM, "%")
 # shoot data
 vine4_interactive_fruit$x$data[[482]]$text <- paste("Shoot ID: ",
 													filter(vine4_links, target_type == "Shoot")$to_shoot_id)
+
+# edit the fucking names because plotly also doesnt honour lables
+vine4_interactive_fruit$x$data[[482]]$name <- "Shoots"
+vine4_interactive_fruit$x$data[[483]]$name <- "Under MTS"
+vine4_interactive_fruit$x$data[[484]]$name <- "M band"
+vine4_interactive_fruit$x$data[[485]]$name <- "T band"
+vine4_interactive_fruit$x$data[[486]]$name <- "Y band"
 
 # Fucking stupid, excpects full path, cant do relative WHY???
 saveWidget(vine4_interactive_fruit, "kiwimac_vine4_interactive.html", selfcontained = TRUE)
