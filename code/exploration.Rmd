@@ -13,11 +13,12 @@ library(tidygraph)
 library(tidyverse)
 library(ggraph)
 library(magrittr)
-library(igraph)
-library(gganimate)
+#library(igraph)
+#library(gganimate)
 library(htmlwidgets)
 library(plotly)
 library(ggplot2)
+library(gplots)
 ```
 
 ```{r data-import, echo=FALSE}
