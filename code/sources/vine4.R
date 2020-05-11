@@ -311,31 +311,32 @@ vine4_fruit_data %>%
 
 ggsave("output/Vine 4/Distance from leader vs DM.jpg", width = 12, height = 8)
 
-#### ggraph stuff ####
-# vine4_graph <- tbl_graph(vine4_nodes, vine4_data) %>%
-# 	activate(nodes) %>%
-# 	mutate(cost_to_origin = node_distance_from(origin_target_id, weights = length)) %>%
-# 	mutate(target_label = ifelse(!is.na(to_shoot_id), to_shoot_id, to_origin_id))
-# 
-# ggraph(vine4_graph, layout = "manual", x = vine4_nodes$y_pos, y = vine4_nodes$x_pos) +
-# 	geom_edge_link(colour = "brown") +
-# 	geom_node_point(aes(colour = target_type), size = 5) + 
-# 	geom_node_text(aes(label = target_label), colour = "black", repel = TRUE) +
-# 	ggtitle("2D layout - Vine 4") +
-# 	geom_text(x = 0, y = 1750, label = "N", size = 14) +
-# 	geom_text(x = 0, y = -1690, label = "S", size = 14) +
-# 	theme_graph()
-# 
-# 
-# ggsave("output/graphs/kiwimac_vine4_layout.png", width = 20, height = 20)
-# 
-# 
-# ggraph(vine4_graph, 'tree') +
-# 	geom_edge_link(colour = "brown") +
-# 	geom_node_point(aes(colour = target_type), size = 6) +
-# 	geom_node_text(aes(label = target_label, colour = target_type), repel = TRUE) +
-# 	ggtitle("Kiwimac - Vine 4 architecture") +
-# 	theme_graph() +
-# 	theme(text = element_text(size = 14), title = element_text(size = 18))
-# 
-# ggsave("output/graphs/kiwimac_vine4.png", width = 35, height = 20)
+### ggraph stuff ####
+vine4_graph <- tbl_graph(vine4_nodes, vine4_data) %>%
+	activate(nodes) %>%
+	mutate(cost_to_origin = node_distance_from(origin_target_id, weights = length)) %>%
+	mutate(target_label = ifelse(!is.na(to_shoot_id), to_shoot_id, to_origin_id))
+
+ggraph(vine4_graph, layout = "manual", x = vine4_nodes$y_pos, y = vine4_nodes$x_pos) +
+	geom_edge_link(colour = "brown") +
+	geom_node_point(aes(colour = target_type), size = 5) +
+	geom_node_text(aes(label = target_label), colour = "black", repel = TRUE) +
+	ggtitle("2D layout - Vine 4") +
+	geom_text(x = 0, y = 1750, label = "N", size = 14) +
+	geom_text(x = 0, y = -1690, label = "S", size = 14) +
+	theme_graph()
+
+
+ggsave("output/graphs/kiwimac_vine4_layout.png", width = 20, height = 20)
+
+
+ggraph(vine4_graph, 'tree') +
+	geom_edge_link(colour = "brown") +
+	geom_node_point(aes(colour = target_type), size = 6) +
+	geom_node_text(aes(label = target_label, colour = target_type), repel = TRUE) +
+	ggtitle("Kiwimac - Vine 4 architecture") +
+	theme_graph() +
+	theme(text = element_text(size = 14), title = element_text(size = 18))
+
+ggsave("output/graphs/kiwimac_vine4.png", width = 35, height = 20)
+

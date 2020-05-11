@@ -48,7 +48,7 @@ ggsave("output/graphs/kiwimac_vine6.png", width = 49, height = 20)
 
 ggraph(vine6_graph, layout = "manual", x = vine6_nodes$x_pos, y = vine6_nodes$y_pos) +
 	geom_edge_link(colour = "brown") +
-	geom_node_point(aes(colour = target_type), size = 5) + 
+	geom_node_point(aes(fill = target_type), shape = 21, size = 5) + 
 	geom_node_text(aes(label = target_label), colour = "black", repel = TRUE) +
 	ggtitle("2D layout - Vine 6") +
 	#geom_text(x = 0, y = 1750, label = "N", size = 14) +

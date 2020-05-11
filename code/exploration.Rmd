@@ -18,7 +18,7 @@ library(magrittr)
 library(htmlwidgets)
 library(plotly)
 library(ggplot2)
-library(gplots)
+#library(gplots)
 ```
 
 ```{r data-import, echo=FALSE}
