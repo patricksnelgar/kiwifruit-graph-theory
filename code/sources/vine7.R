@@ -45,7 +45,7 @@ ggraph(vine7_graph, layout = "manual", x = vine7_nodes$y_pos, y = vine7_nodes$x_
 	theme_graph()
 
 
-ggsave("output/graphs/kiwimac_vine7_layout.png", width = 20, height = 20)
+ggsave("output/vine 7/x-and-y_layout.png", width = 20, height = 20)
 
 
 ggraph(vine7_graph, layout = "tree") + 
@@ -56,4 +56,4 @@ ggraph(vine7_graph, layout = "tree") +
 	theme_graph() +
 	theme(text = element_text(size = 14), title = element_text(size = 18))
 
-ggsave("output/graphs/kiwimac_vine7.png", width = 49, height = 20)
+ggsave("output/vine 7/tree_architecture.png", width = 49, height = 20)

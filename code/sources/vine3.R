@@ -37,7 +37,7 @@ vine3_graph <- tbl_graph(vine3_nodes, vine3_data) %>%
 
 ggraph(vine3_graph, layout = "manual", x = vine3_nodes$y_pos, y = vine3_nodes$x_pos) +
 	geom_edge_link(colour = "brown") +
-	geom_node_point(aes(colour = target_type), size = 5) + 
+	geom_node_point(aes(fill = target_type), shape = 21, size = 5) + 
 	geom_node_text(aes(label = target_label), colour = "black", repel = TRUE) +
 	ggtitle("2D layout - Vine 3") +
 	geom_text(x = 0, y = 1750, label = "N", size = 14) +
@@ -45,7 +45,7 @@ ggraph(vine3_graph, layout = "manual", x = vine3_nodes$y_pos, y = vine3_nodes$x_
 	theme_graph()
 
 
-ggsave("output/graphs/kiwimac_vine3_layout.png", width = 20, height = 20)
+ggsave("output/vine 3/x-and-y_layout.png", width = 20, height = 20)
 
 
 ggraph(vine3_graph, 'tree') +
@@ -56,4 +56,4 @@ ggraph(vine3_graph, 'tree') +
 	theme_graph() +
 	theme(text = element_text(size = 14), title = element_text(size = 18))
 
-ggsave("output/graphs/kiwimac_vine3.png", width = 35, height = 20)
+ggsave("output/vine 3/tree_architecture.png", width = 35, height = 20)

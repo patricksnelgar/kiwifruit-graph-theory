@@ -47,10 +47,38 @@ vine4_fruit_data %<>%
 	left_join(., select(vine4_links, to_shoot_id, xend, yend), by = c("shoot_id" = "to_shoot_id")) 
 
 vine4_fruit_data %<>%
-	mutate(taste_bin = cut(DM, c(0, 16.1, 17.4, 17.9, Inf), include.lowest = TRUE, labels = c("Under MTS", "M band", "T band", "Y band")))
-
+	mutate(taste_bin = cut(DM, c(0, 16.1, 17.4, 17.9, Inf), include.lowest = TRUE, labels = c("Under MTS", "M band", "T band", "Y band")),
+		   dm_bins = cut(DM, seq(0, 30, by = 1), include.lowest = TRUE, labels = paste((0:29), "to", (1:30))))
 
 #### DM heatmap plot ####
+vine4_basic_dm <- ggplot(filter(vine4_links, !is.na(to))) +
+	geom_segment(aes(x = ystart, y = xstart, xend = yend, yend = xend, size = diameter), colour = "lightgrey")+
+	geom_point(aes(x = yend, y = xend, colour = target_type), 
+			   data = filter(vine4_links, !is.na(to) & target_type == "Shoot"),
+			   shape = 19, 
+			   size = 4) + 
+	scale_colour_manual(name = "target_type", 
+						labels = c("Shoot"),
+						values = c("Shoot" = "dimgrey")) +
+	geom_jitter(aes(yend, xend, fill = dm_bins), 
+				data = filter(vine4_fruit_data, !is.na(dm_bins)), 
+				alpha = 0.8, 
+				size = 4,
+				width = 10,
+				height = 70,
+				shape = 21) +
+	scale_fill_brewer(type = "div", palette = "RdYlBu", direction = "-1") +
+	guides(size = FALSE) +
+	ggtitle("Kiwimac Vine4 - basic DM heatmap") +
+	labs(x = NULL, y = NULL) +
+	theme_bw() + 
+	theme(plot.title = element_text(size = 22, hjust = 0.5),
+		  axis.ticks = element_blank(),
+		  axis.text = element_blank())
+
+ggsave("./output/vine 4/basic DM heatmap.jpg", width = 16, height = 12)
+
+#### DM taste band plot ####
 colours1 <- c(col2hex("tomato2"),
 			  col2hex("dimgrey"),
 			  col2hex("steelblue2"), 
@@ -266,7 +294,7 @@ vine4_Fw_hist <- vine4_fruit_data %>%
 		labs(x = "Fresh weight (g)", y = "Frequency") +
 		theme_bw()
 
-ggsave("output/Vine 4/FW by tastebin.jpg", width = 12,height = 6)
+ggsave("output/vine 4/FW by tastebin.jpg", width = 12,height = 6)
 
 vine4_DM_hist <- vine4_fruit_data %>%
 	filter(!is.na(DM)) %>%
@@ -276,7 +304,7 @@ vine4_DM_hist <- vine4_fruit_data %>%
 		labs(x = "Dry matter (%)", y = "Frequency") +
 		theme_bw()
 
-ggsave("output/Vine 4/DM by tastebin.jpg", width = 12,height = 6)
+ggsave("output/vine 4/DM by tastebin.jpg", width = 12,height = 6)
 
 
 #### Scatter plots ####
@@ -288,7 +316,7 @@ vine4_fruit_data %>%
 		labs(x = "Dry matter (%)", y = "distance from canopy wire (cm)") +
 		theme_bw()
 
-ggsave("output/Vine 4/DM vs Height coloured by taste band.jpg", width = 12, height = 6)
+ggsave("output/vine 4/DM vs Height coloured by taste band.jpg", width = 12, height = 6)
 
 vine4_fruit_data %>%
 	filter(!is.na(DM) & !is.na(FrtWt)) %>%
@@ -298,7 +326,7 @@ vine4_fruit_data %>%
 		labs(x = "Dry matter (%)", y = "Fresh weight (g)") +
 		theme_bw()
 
-ggsave("output/Vine 4/DM vs FW coloured by taste band.jpg", width = 12, height = 6)
+ggsave("output/vine 4/DM vs FW coloured by taste band.jpg", width = 12, height = 6)
 
 vine4_fruit_data %>%
 	mutate(distance_from_leader = abs(yend)) %>%
@@ -309,7 +337,7 @@ vine4_fruit_data %>%
 		labs(x = "Distance from leader (cm)", y = "Dry matter (%)") +
 		theme_bw()
 
-ggsave("output/Vine 4/Distance from leader vs DM.jpg", width = 12, height = 8)
+ggsave("output/vine 4/Distance from leader vs DM.jpg", width = 12, height = 8)
 
 ### ggraph stuff ####
 vine4_graph <- tbl_graph(vine4_nodes, vine4_data) %>%
@@ -319,7 +347,7 @@ vine4_graph <- tbl_graph(vine4_nodes, vine4_data) %>%
 
 ggraph(vine4_graph, layout = "manual", x = vine4_nodes$y_pos, y = vine4_nodes$x_pos) +
 	geom_edge_link(colour = "brown") +
-	geom_node_point(aes(colour = target_type), size = 5) +
+	geom_node_point(aes(fill = target_type), shape = 21, size = 5) +
 	geom_node_text(aes(label = target_label), colour = "black", repel = TRUE) +
 	ggtitle("2D layout - Vine 4") +
 	geom_text(x = 0, y = 1750, label = "N", size = 14) +
@@ -327,7 +355,7 @@ ggraph(vine4_graph, layout = "manual", x = vine4_nodes$y_pos, y = vine4_nodes$x_
 	theme_graph()
 
 
-ggsave("output/graphs/kiwimac_vine4_layout.png", width = 20, height = 20)
+ggsave("output/vine 4/x-and-y_layout.png", width = 20, height = 20)
 
 
 ggraph(vine4_graph, 'tree') +
@@ -338,5 +366,5 @@ ggraph(vine4_graph, 'tree') +
 	theme_graph() +
 	theme(text = element_text(size = 14), title = element_text(size = 18))
 
-ggsave("output/graphs/kiwimac_vine4.png", width = 35, height = 20)
+ggsave("output/vine 4/tree_architecture.png", width = 35, height = 20)
 
