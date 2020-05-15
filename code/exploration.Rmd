@@ -23,7 +23,7 @@ library(gplots)
 
 ```{r data-import, echo=FALSE}
 
-quadrant_info <- read_csv("./input/quadrant-info.csv")
+quadrant_info <- read_csv("input/quadrant-info.csv")
 
 quadrant_labels <- data.frame(x = rep(c(-1250, -750, -250, 250, 750, 1250), each = 6),
 							  y = rep(c(2500, 1500, 500, -500, -1500, -2500), 6),
@@ -31,50 +31,74 @@ quadrant_labels <- data.frame(x = rep(c(-1250, -750, -250, 250, 750, 1250), each
 
 ```
 
-```{r vine2_fake_data}
+```{r vine2_fake_data, include = FALSE}
 #' Create list of only shoot IDs
 #'  then generate random # of fruit per shoot 9inc 0's)
 #' temp_rep is used to keep the shoot id when generating the fruit data frame 
 #'  so it keeps ALL shoot ids even if there is 'no' fruit on that shoot
-shoot_data <- vine2_data %>%
-				filter(!is.na(to_shoot_id)) %>%
-				select(to_shoot_id) %>%
-				mutate(num_fruit = as.integer(runif(length(to_shoot_id), 0, 6))) %>%
-				mutate(temp_rep = replace(num_fruit, which(num_fruit == 0), 1))
-				
-
-fruit_data <- shoot_data[rep(row.names(shoot_data), shoot_data$temp_rep), 1:2] %>%
-				mutate(fruit_id = ifelse(num_fruit != 0, paste("2-", 1:length(to_shoot_id)), NA)) %>%
-				mutate(dm = ifelse(num_fruit > 0, runif(length(!is.na(fruit_id)), 16,19), NA)) %>%
-				mutate(fw = ifelse(num_fruit > 0, runif(length(!is.na(fruit_id)), 120, 150), NA))
+# shoot_data <- vine2_data %>%
+# 				filter(!is.na(to_shoot_id)) %>%
+# 				select(to_shoot_id) %>%
+# 				mutate(num_fruit = as.integer(runif(length(to_shoot_id), 0, 6))) %>%
+# 				mutate(temp_rep = replace(num_fruit, which(num_fruit == 0), 1))
+# 				
+# 
+# fruit_data <- shoot_data[rep(row.names(shoot_data), shoot_data$temp_rep), 1:2] %>%
+# 				mutate(fruit_id = ifelse(num_fruit != 0, paste("2-", 1:length(to_shoot_id)), NA)) %>%
+# 				mutate(dm = ifelse(num_fruit > 0, runif(length(!is.na(fruit_id)), 16,19), NA)) %>%
+# 				mutate(fw = ifelse(num_fruit > 0, runif(length(!is.na(fruit_id)), 120, 150), NA))
 ```
 
 ```{r vine1, echo=FALSE}
 
-source("./sources/vine1.R")
+source("code/sources/vine1.R")
 
 ```
 
 ```{r vine2, echo=FALSE}
 
-source("./sources/vine2.R")
+source("code/sources/vine2.R")
 
 ```
 
 ```{r vine3, echo=FALSE}
 
-source("./sources/vine3.R")
+source("code/sources/vine3.R")
 
 ```
 
 ```{r vine4, echo=FALSE}
 
-source("./sources/vine4.R")
+source("code/sources/vine4.R")
 
 ```
 
 ```{r vine5, echo=FALSE}
 
-source("./sources/vine5.R")
+source("code/sources/vine5.R")
+
+```
+
+```{r vine6, echo=FALSE}
+
+source("code/sources/vine6.R")
+
+```
+
+```{r vine7, echo=FALSE}
+
+source("code/sources/vine7.R")
+
+```
+
+```{r vine8, echo=FALSE}
+
+source("code/sources/vine8.R")
+
+```
+
+```{r vine9, echo=FALSE}
+
+source("code/sources/vine9.R")
 
 ```

@@ -69,7 +69,7 @@ vine4_basic_dm <- ggplot(filter(vine4_links, !is.na(to))) +
 				shape = 21) +
 	scale_fill_brewer(type = "div", palette = "RdYlBu", direction = "-1") +
 	guides(size = FALSE) +
-	ggtitle("Kiwimac Vine4 - basic DM heatmap") +
+	ggtitle("Kiwimac vine4 - basic DM heatmap") +
 	labs(x = NULL, y = NULL) +
 	theme_bw() + 
 	theme(plot.title = element_text(size = 22, hjust = 0.5),
@@ -123,39 +123,39 @@ vine4_fruit_dm <- ggplot(filter(vine4_links, !is.na(to))) +
 vine4_interactive_dm <- ggplotly(vine4_fruit_dm)
 
 # Fruit data points
-vine4_interactive_dm$x$data[[483]]$text <- vine4_fruit_data %>%
+vine4_interactive_dm$x$data[[478]]$text <- vine4_fruit_data %>%
 	filter(taste_bin == "Under MTS") %$%
 	paste0("FruitID: ", FruitID, 
 		   "\nFW: ", FrtWt, "g",
 		   "\nDM: ", DM, "%")
 # Fruit data points
-vine4_interactive_dm$x$data[[484]]$text <- vine4_fruit_data %>%
+vine4_interactive_dm$x$data[[479]]$text <- vine4_fruit_data %>%
 	filter(taste_bin == "M band") %$%
 	paste0("FruitID: ", FruitID, 
 		   "\nFW: ", FrtWt, "g",
 		   "\nDM: ", DM, "%")
 # Fruit data points
-vine4_interactive_dm$x$data[[485]]$text <- vine4_fruit_data %>%
+vine4_interactive_dm$x$data[[480]]$text <- vine4_fruit_data %>%
 	filter(taste_bin == "T band") %$%
 	paste0("FruitID: ", FruitID, 
 		   "\nFW: ", FrtWt, "g",
 		   "\nDM: ", DM, "%")
 # Fruit data points
-vine4_interactive_dm$x$data[[486]]$text <- vine4_fruit_data %>%
+vine4_interactive_dm$x$data[[481]]$text <- vine4_fruit_data %>%
 	filter(taste_bin == "Y band") %$%
 	paste0("FruitID: ", FruitID, 
 		   "\nFW: ", FrtWt, "g",
 		   "\nDM: ", DM, "%")
 # shoot data
-vine4_interactive_dm$x$data[[482]]$text <- paste("Shoot ID: ",
+vine4_interactive_dm$x$data[[477]]$text <- paste("Shoot ID: ",
 													filter(vine4_links, target_type == "Shoot")$to_shoot_id)
 
 # edit the fucking names because plotly also doesnt honour lables
-vine4_interactive_dm$x$data[[482]]$name <- "Shoots"
-vine4_interactive_dm$x$data[[483]]$name <- "Under MTS"
-vine4_interactive_dm$x$data[[484]]$name <- "M band"
-vine4_interactive_dm$x$data[[485]]$name <- "T band"
-vine4_interactive_dm$x$data[[486]]$name <- "Y band"
+vine4_interactive_dm$x$data[[477]]$name <- "Shoots"
+vine4_interactive_dm$x$data[[478]]$name <- "Under MTS"
+vine4_interactive_dm$x$data[[479]]$name <- "M band"
+vine4_interactive_dm$x$data[[480]]$name <- "T band"
+vine4_interactive_dm$x$data[[481]]$name <- "Y band"
 
 
 # playing around with buttons 
@@ -272,14 +272,14 @@ vine4_flower_timing <- ggplot(filter(vine4_links, !is.na(to))) +
 
 vine4_interactive_flower_timing <- ggplotly(vine4_flower_timing)
 
-vine4_interactive_flower_timing$x$data[[482]]$name <- "Shoots"
-vine4_interactive_flower_timing$x$data[[483]]$name <- "Black"
-vine4_interactive_flower_timing$x$data[[484]]$name <- "Grey"
-vine4_interactive_flower_timing$x$data[[485]]$name <- "Purple"
-vine4_interactive_flower_timing$x$data[[486]]$name <- "Pink"
-vine4_interactive_flower_timing$x$data[[487]]$name <- "Red"
-vine4_interactive_flower_timing$x$data[[488]]$name <- "White"
-vine4_interactive_flower_timing$x$data[[489]]$name <- "Yellow"
+vine4_interactive_flower_timing$x$data[[477]]$name <- "Shoots"
+vine4_interactive_flower_timing$x$data[[478]]$name <- "Black"
+vine4_interactive_flower_timing$x$data[[479]]$name <- "Grey"
+vine4_interactive_flower_timing$x$data[[480]]$name <- "Purple"
+vine4_interactive_flower_timing$x$data[[481]]$name <- "Pink"
+vine4_interactive_flower_timing$x$data[[482]]$name <- "Red"
+vine4_interactive_flower_timing$x$data[[483]]$name <- "White"
+vine4_interactive_flower_timing$x$data[[484]]$name <- "Yellow"
 
 saveWidget(vine4_interactive_flower_timing, "kiwimac vine4 flower timing.html")
 

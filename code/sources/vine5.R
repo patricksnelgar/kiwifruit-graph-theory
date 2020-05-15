@@ -87,7 +87,7 @@ vine5_graph <- tbl_graph(vine5_nodes, vine5_data) %>%
 
 ggraph(vine5_graph, layout = "manual", x = vine5_nodes$y_pos, y = vine5_nodes$x_pos) +
 	geom_edge_link(colour = "brown") +
-	geom_node_point(aes(colour = target_type), size = 5) + 
+	geom_node_point(aes(fill = target_type), shape = 21, size = 5) + 
 	geom_node_text(aes(label = target_label), colour = "black", repel = TRUE) +
 	ggtitle("2D layout - Vine 5") +
 	geom_text(x = 0, y = 1800, label = "N", size = 14) +
