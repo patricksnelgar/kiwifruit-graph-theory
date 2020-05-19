@@ -1,13 +1,12 @@
 #### data import ####
-vine6_data <- read_csv("input/kiwimac_data_vine6.csv") %>%
+vine6_data <- read_csv("input/architecture/kiwimac_data_vine6.csv") %>%
 	mutate(to_shoot_id = ifelse(!is.na(to_shoot_id), paste(vine_id, to_shoot_id, sep = "-"), NA),
 		   cane_id = ifelse(!is.na(cane_id), paste(vine_id, cane_id, sep = "-"), NA),
 		   to_origin_id = ifelse(!is.na(to_origin_id), paste(vine_id, to_origin_id, sep = "-"), NA),
 		   base_origin_id = ifelse(!is.na(base_origin_id), paste(vine_id, base_origin_id, sep = "-"), NA))
 
-vine6_fruit_data <- read_csv("input/fruit_data_vine6.csv") %>%
-	select(FruitID:Height, FrtWt:DM) %>%
-	mutate(shoot_id = paste("6", ShootID, sep = "-"))
+vine6_fruit_data <- read_csv("input/fruit_data/fruit_data_vine6.csv") %>%
+	mutate(shoot_id = paste(Vine, ShootID, sep = "-"))
 
 #### data gathering ####
 
@@ -47,10 +46,10 @@ vine6_fruit_data %<>%
 	left_join(., select(vine6_links, to_shoot_id, xend, yend), by = c("shoot_id" = "to_shoot_id")) 
 
 vine6_fruit_data %<>%
-	mutate(taste_bin = cut(DM, c(0, 16.1, 17.4, 17.9, Inf), include.lowest = TRUE, labels = c("Under MTS", "M band", "T band", "Y band")),
-		   dm_bins = cut(DM, seq(0, 30, by = 1), include.lowest = TRUE, labels = paste((0:29), "to", (1:30))))
+	mutate(taste_bin = cut(DryMatter, c(0, 16.1, 17.4, 17.9, Inf), include.lowest = TRUE, labels = c("Under MTS", "M band", "T band", "Y band")),
+		   dm_bins = cut(DryMatter, seq(0, 30, by = 1), include.lowest = TRUE, labels = paste((0:29), "to", (1:30))))
 
-#### DM heatmap plot ####
+#### DryMatter heatmap plot ####
 vine6_basic_dm <- ggplot(filter(vine6_links, !is.na(to))) +
 	geom_segment(aes(x = ystart, y = xstart, xend = yend, yend = xend), colour = "lightgrey")+
 	geom_point(aes(x = yend, y = xend, colour = target_type), 
@@ -69,14 +68,14 @@ vine6_basic_dm <- ggplot(filter(vine6_links, !is.na(to))) +
 				shape = 21) +
 	scale_fill_brewer(type = "div", palette = "RdYlBu", direction = "-1") +
 	guides(size = FALSE) +
-	ggtitle("Kiwimac vine6 - basic DM heatmap") +
+	ggtitle("Kiwimac vine6 - basic Dry Matter heatmap") +
 	labs(x = NULL, y = NULL) +
 	theme_bw() + 
 	theme(plot.title = element_text(size = 22, hjust = 0.5),
 		  axis.ticks = element_blank(),
 		  axis.text = element_blank())
 
-ggsave("./output/vine 6/basic DM heatmap.jpg", width = 16, height = 12)
+ggsave("./output/vine 6/basic Dry Matter heatmap.jpg", width = 16, height = 12)
 
 
 #### ggraph stuff ####

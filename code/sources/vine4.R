@@ -1,13 +1,12 @@
 #### data import ####
-vine4_data <- read_csv("input/kiwimac_data_vine4.csv") %>%
+vine4_data <- read_csv("input/architecture/kiwimac_data_vine4.csv") %>%
 	mutate(to_shoot_id = ifelse(!is.na(to_shoot_id), paste(vine_id, to_shoot_id, sep = "-"), NA),
 		   cane_id = ifelse(!is.na(cane_id), paste(vine_id, cane_id, sep = "-"), NA),
 		   to_origin_id = ifelse(!is.na(to_origin_id), paste(vine_id, to_origin_id, sep = "-"), NA),
 		   base_origin_id = ifelse(!is.na(base_origin_id), paste(vine_id, base_origin_id, sep = "-"), NA))
 
-vine4_fruit_data <- read_csv("input/fruit_data_vine4.csv") %>%
-	select(FruitID:Height, FrtWt:DM) %>%
-	mutate(shoot_id = paste("4", ShootID, sep = "-"))
+vine4_fruit_data <- read_csv("input/fruit_data/fruit_data_vine4.csv") %>%
+						mutate(shoot_id = paste(Vine, ShootID, sep = "-"))
 
 #### data gathering ####
 
@@ -47,38 +46,66 @@ vine4_fruit_data %<>%
 	left_join(., select(vine4_links, to_shoot_id, xend, yend), by = c("shoot_id" = "to_shoot_id")) 
 
 vine4_fruit_data %<>%
-	mutate(taste_bin = cut(DM, c(0, 16.1, 17.4, 17.9, Inf), include.lowest = TRUE, labels = c("Under MTS", "M band", "T band", "Y band")),
-		   dm_bins = cut(DM, seq(0, 30, by = 1), include.lowest = TRUE, labels = paste((0:29), "to", (1:30))))
+	mutate(taste_bin = cut(DryMatter, c(0, 16.1, 17.4, 17.9, Inf), include.lowest = TRUE, labels = c("Under MTS", "M band", "T band", "Y band")),
+		   dm_bins = cut(DryMatter, seq(0, 30, by = 1), include.lowest = TRUE, labels = paste((0:29), "to", (1:30))))
 
-#### DM heatmap plot ####
-vine4_basic_dm <- ggplot(filter(vine4_links, !is.na(to))) +
+
+#### DryMatter heatmap plot old ####
+vine4_basic_DryMatter <- ggplot(filter(vine4_links, !is.na(to))) +
 	geom_segment(aes(x = ystart, y = xstart, xend = yend, yend = xend, size = diameter), colour = "lightgrey")+
-	geom_point(aes(x = yend, y = xend, colour = target_type), 
+	geom_point(aes(x = yend, y = xend, colour = target_type),
 			   data = filter(vine4_links, !is.na(to) & target_type == "Shoot"),
-			   shape = 19, 
-			   size = 4) + 
-	scale_colour_manual(name = "target_type", 
+			   shape = 19,
+			   size = 4) +
+	scale_colour_manual(name = "target_type",
 						labels = c("Shoot"),
 						values = c("Shoot" = "dimgrey")) +
-	geom_jitter(aes(yend, xend, fill = dm_bins), 
-				data = filter(vine4_fruit_data, !is.na(dm_bins)), 
-				alpha = 0.8, 
+	geom_jitter(aes(yend, xend, fill = dm_bins),
+				data = filter(vine4_fruit_data, !is.na(dm_bins)),
+				alpha = 0.8,
 				size = 4,
 				width = 10,
 				height = 70,
 				shape = 21) +
 	scale_fill_brewer(type = "div", palette = "RdYlBu", direction = "-1") +
 	guides(size = FALSE) +
-	ggtitle("Kiwimac vine4 - basic DM heatmap") +
+	ggtitle("Kiwimac vine4 - basic DryMatter heatmap") +
 	labs(x = NULL, y = NULL) +
-	theme_bw() + 
+	theme_bw() +
 	theme(plot.title = element_text(size = 22, hjust = 0.5),
 		  axis.ticks = element_blank(),
 		  axis.text = element_blank())
 
-ggsave("./output/vine 4/basic DM heatmap.jpg", width = 16, height = 12)
+ggsave("./output/vine 4/basic DryMatter heatmap.jpg", width = 16, height = 12)
 
-#### DM taste band plot ####
+
+# #### DryMatter heatmap plot by fruit pos ####
+# vine4_basic_DryMatter <- ggplot(filter(vine4_links, !is.na(to))) +
+# 	geom_segment(aes(x = ystart, y = xstart, xend = yend, yend = xend, size = diameter), colour = "lightgrey")+
+# 	geom_point(aes(x = yend, y = xend, colour = target_type), 
+# 			   data = filter(vine4_links, !is.na(to) & target_type == "Shoot"),
+# 			   shape = 19, 
+# 			   size = 2) + 
+# 	scale_colour_manual(name = "target_type", 
+# 						labels = c("Shoot"),
+# 						values = c("Shoot" = "dimgrey")) +
+# 	geom_point(aes(pointXOffset(yend, 20, FruitPos), pointYOffset(xend, 20, FruitPos), fill = dm_bins),
+# 				data = filter(vine4_fruit_data, !is.na(dm_bins)),
+# 				alpha = 0.8,
+# 				size = 2,
+# 				shape = 21) +
+# 	scale_fill_brewer(type = "div", palette = "RdYlBu", direction = "-1") +
+# 	guides(size = FALSE) +
+# 	ggtitle("Kiwimac vine4 - basic Dry Matter heatmap") +
+# 	labs(x = NULL, y = NULL) +
+# 	theme_bw() + 
+# 	theme(plot.title = element_text(size = 22, hjust = 0.5),
+# 		  axis.ticks = element_blank(),
+# 		  axis.text = element_blank())
+# 
+# ggsave("./output/vine 4/basic Dry Matter heatmap.jpg", width = 16, height = 12)
+
+#### DryMatter taste band plot ####
 colours1 <- c(col2hex("tomato2"),
 			  col2hex("dimgrey"),
 			  col2hex("steelblue2"), 
@@ -92,7 +119,7 @@ colours2 <- c(col2hex("goldenrod1"),
 			  col2hex("blueviolet"),
 			  col2hex("red"))
 
-vine4_fruit_dm <- ggplot(filter(vine4_links, !is.na(to))) +
+vine4_fruit_DryMatter <- ggplot(filter(vine4_links, !is.na(to))) +
 	geom_segment(aes(x = ystart, y = xstart, xend = yend, yend = xend, size = diameter), colour = "lightgrey")+
 	geom_point(aes(x = yend, y = xend, colour = target_type), 
 			   data = filter(vine4_links, !is.na(to) & target_type == "Shoot"),
@@ -112,7 +139,7 @@ vine4_fruit_dm <- ggplot(filter(vine4_links, !is.na(to))) +
 					  values = c("steelblue2", "plum", "springgreen3", "tomato2"), 
 					  labels = c("Under MTS", "M band", "T band", "Y band")) +
 	guides(size = FALSE, colour = FALSE) +
-	ggtitle("Kiwimac Vine4 - DM heatmap") +
+	ggtitle("Kiwimac Vine4 - Dry Matter heatmap") +
 	labs(x = NULL, y = NULL) +
 	theme_bw() + 
 	theme(plot.title = element_text(size = 22, hjust = 0.5),
@@ -120,47 +147,47 @@ vine4_fruit_dm <- ggplot(filter(vine4_links, !is.na(to))) +
 		  axis.text = element_blank())
 
 
-vine4_interactive_dm <- ggplotly(vine4_fruit_dm)
+vine4_interactive_DryMatter <- ggplotly(vine4_fruit_DryMatter)
 
 # Fruit data points
-vine4_interactive_dm$x$data[[478]]$text <- vine4_fruit_data %>%
+vine4_interactive_DryMatter$x$data[[478]]$text <- vine4_fruit_data %>%
 	filter(taste_bin == "Under MTS") %$%
 	paste0("FruitID: ", FruitID, 
 		   "\nFW: ", FrtWt, "g",
-		   "\nDM: ", DM, "%")
+		   "\nDry Matter: ", DryMatter, "%")
 # Fruit data points
-vine4_interactive_dm$x$data[[479]]$text <- vine4_fruit_data %>%
+vine4_interactive_DryMatter$x$data[[479]]$text <- vine4_fruit_data %>%
 	filter(taste_bin == "M band") %$%
 	paste0("FruitID: ", FruitID, 
 		   "\nFW: ", FrtWt, "g",
-		   "\nDM: ", DM, "%")
+		   "\nDry Matter: ", DryMatter, "%")
 # Fruit data points
-vine4_interactive_dm$x$data[[480]]$text <- vine4_fruit_data %>%
+vine4_interactive_DryMatter$x$data[[480]]$text <- vine4_fruit_data %>%
 	filter(taste_bin == "T band") %$%
 	paste0("FruitID: ", FruitID, 
 		   "\nFW: ", FrtWt, "g",
-		   "\nDM: ", DM, "%")
+		   "\nDry Matter: ", DryMatter, "%")
 # Fruit data points
-vine4_interactive_dm$x$data[[481]]$text <- vine4_fruit_data %>%
+vine4_interactive_DryMatter$x$data[[481]]$text <- vine4_fruit_data %>%
 	filter(taste_bin == "Y band") %$%
 	paste0("FruitID: ", FruitID, 
 		   "\nFW: ", FrtWt, "g",
-		   "\nDM: ", DM, "%")
+		   "\nDry Matter: ", DryMatter, "%")
 # shoot data
-vine4_interactive_dm$x$data[[477]]$text <- paste("Shoot ID: ",
+vine4_interactive_DryMatter$x$data[[477]]$text <- paste("Shoot ID: ",
 													filter(vine4_links, target_type == "Shoot")$to_shoot_id)
 
 # edit the fucking names because plotly also doesnt honour lables
-vine4_interactive_dm$x$data[[477]]$name <- "Shoots"
-vine4_interactive_dm$x$data[[478]]$name <- "Under MTS"
-vine4_interactive_dm$x$data[[479]]$name <- "M band"
-vine4_interactive_dm$x$data[[480]]$name <- "T band"
-vine4_interactive_dm$x$data[[481]]$name <- "Y band"
+vine4_interactive_DryMatter$x$data[[477]]$name <- "Shoots"
+vine4_interactive_DryMatter$x$data[[478]]$name <- "Under MTS"
+vine4_interactive_DryMatter$x$data[[479]]$name <- "M band"
+vine4_interactive_DryMatter$x$data[[480]]$name <- "T band"
+vine4_interactive_DryMatter$x$data[[481]]$name <- "Y band"
 
 
 # playing around with buttons 
 # it works!
-vine4_interactive_dm %<>% 
+vine4_interactive_DryMatter %<>% 
 	layout(updatemenus = list(
 		list(
 			type = 'buttons',
@@ -186,7 +213,7 @@ vine4_interactive_dm %<>%
 # 	y = 0.8,
 # 	buttons = list(
 # 		list(
-# 			label = "DM",
+# 			label = "DryMatter",
 # 			method = "restyle",
 # 			args = list("visible", list(TRUE, TRUE, TRUE, TRUE, TRUE))
 # 		),
@@ -200,7 +227,7 @@ vine4_interactive_dm %<>%
 
 
 # Fucking stupid, expects full path, cant do relative WHY???
-saveWidget(vine4_interactive_dm, "kiwimac vine4 dry matter.html", selfcontained = TRUE)
+saveWidget(vine4_interactive_DryMatter, "kiwimac vine4 dry matter.html", selfcontained = TRUE)
 
 #### Interactive fruit height ####
 vine4_fruit_height <- ggplot(filter(vine4_links, !is.na(to))) +
@@ -231,7 +258,7 @@ vine4_fruit_height <- ggplot(filter(vine4_links, !is.na(to))) +
 		  axis.text = element_blank())
 
 
-vine4_interactive_dm_height <- ggplotly(vine4_fruit_height)
+vine4_interactive_DryMatter_height <- ggplotly(vine4_fruit_height)
 
 
 
@@ -296,48 +323,48 @@ vine4_Fw_hist <- vine4_fruit_data %>%
 
 ggsave("output/vine 4/FW by tastebin.jpg", width = 12,height = 6)
 
-vine4_DM_hist <- vine4_fruit_data %>%
-	filter(!is.na(DM)) %>%
+vine4_DryMatter_hist <- vine4_fruit_data %>%
+	filter(!is.na(DryMatter)) %>%
 	ggplot() +
-		geom_histogram(aes(DM, fill = taste_bin), bins = 100) +
-		ggtitle("Frequency of DM coloured by taste band") + 
+		geom_histogram(aes(DryMatter, fill = taste_bin), bins = 100) +
+		ggtitle("Frequency of Dry Matter coloured by taste band") + 
 		labs(x = "Dry matter (%)", y = "Frequency") +
 		theme_bw()
 
-ggsave("output/vine 4/DM by tastebin.jpg", width = 12,height = 6)
+ggsave("output/vine 4/Dry Matter by tastebin.jpg", width = 12,height = 6)
 
 
 #### Scatter plots ####
 vine4_fruit_data %>%
-	filter(!is.na(DM) & !is.na(FrtWt) & !is.na(Height)) %>%
+	filter(!is.na(DryMatter) & !is.na(FrtWt) & !is.na(Height)) %>%
 	ggplot() +
-		geom_point(aes(DM, Height, colour = taste_bin), size = 2) +
-		ggtitle("DM vs Height coloured by taste bin") + 
+		geom_point(aes(DryMatter, Height, colour = taste_bin), size = 2) +
+		ggtitle("Dry Matter vs Height coloured by taste bin") + 
 		labs(x = "Dry matter (%)", y = "distance from canopy wire (cm)") +
 		theme_bw()
 
-ggsave("output/vine 4/DM vs Height coloured by taste band.jpg", width = 12, height = 6)
+ggsave("output/vine 4/Dry Matter vs Height coloured by taste band.jpg", width = 12, height = 6)
 
 vine4_fruit_data %>%
-	filter(!is.na(DM) & !is.na(FrtWt)) %>%
+	filter(!is.na(DryMatter) & !is.na(FrtWt)) %>%
 	ggplot() +
-		geom_point(aes(DM, FrtWt, colour = taste_bin), size = 2) +
-		ggtitle("DM vs FW coloured by taste bin") + 
+		geom_point(aes(DryMatter, FrtWt, colour = taste_bin), size = 2) +
+		ggtitle("DryMatter vs FW coloured by taste bin") + 
 		labs(x = "Dry matter (%)", y = "Fresh weight (g)") +
 		theme_bw()
 
-ggsave("output/vine 4/DM vs FW coloured by taste band.jpg", width = 12, height = 6)
+ggsave("output/vine 4/Dry Matter vs FW coloured by taste band.jpg", width = 12, height = 6)
 
 vine4_fruit_data %>%
 	mutate(distance_from_leader = abs(yend)) %>%
-	filter(!is.na(DM)) %>%
+	filter(!is.na(DryMatter)) %>%
 	ggplot() +
-		geom_point(aes(distance_from_leader, DM, colour = taste_bin), size = 2) +
-		ggtitle("Distance from leader (absolute) vs DM coloured by taste band") +
+		geom_point(aes(distance_from_leader, DryMatter, colour = taste_bin), size = 2) +
+		ggtitle("Distance from leader (absolute) vs DryMatter coloured by taste band") +
 		labs(x = "Distance from leader (cm)", y = "Dry matter (%)") +
 		theme_bw()
 
-ggsave("output/vine 4/Distance from leader vs DM.jpg", width = 12, height = 8)
+ggsave("output/vine 4/Distance from leader vs Dry Matter.jpg", width = 12, height = 8)
 
 ### ggraph stuff ####
 vine4_graph <- tbl_graph(vine4_nodes, vine4_data) %>%

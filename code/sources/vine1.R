@@ -1,5 +1,5 @@
 
-vine1_data <- read_csv("input/kiwimac_data_vine1.csv") %>%
+vine1_data <- read_csv("input/architecture/kiwimac_data_vine1.csv") %>%
 	mutate(to_shoot_id = ifelse(!is.na(to_shoot_id), paste(vine_id, to_shoot_id, sep = "-"), NA),
 		   cane_id = ifelse(!is.na(cane_id), paste(vine_id, cane_id, sep = "-"), NA),
 		   to_origin_id = ifelse(!is.na(to_origin_id), paste(vine_id, to_origin_id, sep = "-"), NA),
