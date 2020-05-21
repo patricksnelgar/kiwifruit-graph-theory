@@ -19,11 +19,12 @@ library(htmlwidgets)
 library(plotly)
 library(ggplot2)
 library(gplots)
+library(lubridate)
 library(scales)
 ```
 
 
-```{r data-import, echo=FALSE}
+```{r misc_data_import, echo = FALSE}
 
 quadrant_info <- read_csv("input/quadrant-info.csv")
 
@@ -35,24 +36,20 @@ flowering_dates <- read_csv("input/flowering_dates.csv")
 
 ```
 
-```{r vine2_fake_data, include = FALSE}
-#' Create list of only shoot IDs
-#'  then generate random # of fruit per shoot 9inc 0's)
-#' temp_rep is used to keep the shoot id when generating the fruit data frame 
-#'  so it keeps ALL shoot ids even if there is 'no' fruit on that shoot
-# shoot_data <- vine2_data %>%
-# 				filter(!is.na(to_shoot_id)) %>%
-# 				select(to_shoot_id) %>%
-# 				mutate(num_fruit = as.integer(runif(length(to_shoot_id), 0, 6))) %>%
-# 				mutate(temp_rep = replace(num_fruit, which(num_fruit == 0), 1))
-# 				
-# 
-# fruit_data <- shoot_data[rep(row.names(shoot_data), shoot_data$temp_rep), 1:2] %>%
-# 				mutate(fruit_id = ifelse(num_fruit != 0, paste("2-", 1:length(to_shoot_id)), NA)) %>%
-# 				mutate(dm = ifelse(num_fruit > 0, runif(length(!is.na(fruit_id)), 16,19), NA)) %>%
-# 				mutate(fw = ifelse(num_fruit > 0, runif(length(!is.na(fruit_id)), 120, 150), NA))
-```
+```{r vine_data_import, echo = FALSE}
 
+source("code/sources/data_import/vine1_import.R")
+source("code/sources/data_import/vine2_import.R")
+source("code/sources/data_import/vine3_import.R")
+source("code/sources/data_import/vine4_import.R")
+source("code/sources/data_import/vine5_import.R")
+source("code/sources/data_import/vine6_import.R")
+source("code/sources/data_import/vine7_import.R")
+source("code/sources/data_import/vine8_import.R")
+source("code/sources/data_import/vine9_import.R")
+
+
+```
 
 ```{r functions, echo = FALSE}
 
@@ -71,22 +68,20 @@ pointYOffset <- function (central_ypoint, radius, point_pos){
 
 ```{r all_vines_plot, echo = FALSE}
 
-all_fruit_data <- bind_rows(vine4_fruit_data, vine5_fruit_data, vine6_fruit_data, vine7_fruit_data, vine8_fruit_data, vine9_fruit_data) %>%
+all_fruit_data <- bind_rows(vine1_fruit_data, vine4_fruit_data, vine5_fruit_data, vine6_fruit_data, vine7_fruit_data, vine8_fruit_data, vine9_fruit_data) %>%
 					mutate(dm_bins = cut(DryMatter, seq(0, 30, by = 1), include.lowest = TRUE, labels = paste((0:29), "to", (1:30))))
 
-all_arch_data <- bind_rows(mutate(vine4_links, Vine = 4),
+all_arch_data <- bind_rows(mutate(vine1_links, Vine = 1),
+						   mutate(vine4_links, Vine = 4),
 						   mutate(vine5_links, Vine = 5),
 						   mutate(vine6_links, Vine = 6),
 						   mutate(vine7_links, Vine = 7),
 						   mutate(vine8_links, Vine = 8),
 						   mutate(vine9_links, Vine = 9)) 
 
-all_arch_data %>%
-	filter(is.na(to)) %>%
-	select(from:ystart, origin_target_id, to_origin_id, Vine)
-					
-vine_labels <- paste("Vine", 4:9)
-names(vine_labels) <- c(4:9)
+
+vine_labels <- paste("Vine", c(1,4:9))
+names(vine_labels) <- c(1,4:9)
 					
 ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend))) +
 	geom_segment(aes(x = ystart, y = xstart, xend = yend, yend = xend, size = diameter), colour = "lightgrey") +
@@ -109,59 +104,61 @@ ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend))) +
 		  axis.text = element_blank(),
 		  strip.text.x = element_text(size = 12))
 	
-ggsave("output/vine 4 - 9 dry matter map.jpg", width = 20, height = 15)
-```
-
-```{r vine1, echo=FALSE}
-
-source("code/sources/vine1.R")
+ggsave("output/vine 1 & 4 - 9 dry matter map.jpg", width = 20, height = 15)
 
 ```
 
-```{r vine2, echo=FALSE}
 
-source("code/sources/vine2.R")
+```{r vine1_visualisation, echo=FALSE}
 
-```
-
-```{r vine3, echo=FALSE}
-
-source("code/sources/vine3.R")
+source("code/sources/visualisation/vine1_visualisation.R")
 
 ```
 
-```{r vine4, echo=FALSE}
+```{r vine2_visualisation, echo=FALSE}
 
-source("code/sources/vine4.R")
-
-```
-
-```{r vine5, echo=FALSE}
-
-source("code/sources/vine5.R")
+source("code/sources/visualisation/vine2_visualisation.R")
 
 ```
 
-```{r vine6, echo=FALSE}
+```{r vine3_visualisation, echo=FALSE}
 
-source("code/sources/vine6.R")
-
-```
-
-```{r vine7, echo=FALSE}
-
-source("code/sources/vine7.R")
+source("code/sources/visualisation/vine3_visualisation.R")
 
 ```
 
-```{r vine8, echo=FALSE}
+```{r vine4_visualisation, echo=FALSE}
 
-source("code/sources/vine8.R")
+source("code/sources/visualisation/vine4_visualisation.R")
 
 ```
 
-```{r vine9, echo=FALSE}
+```{r vine5_visualisation, echo=FALSE}
 
-source("code/sources/vine9.R")
+source("code/sources/visualisation/vine5_visualisation.R")
+
+```
+
+```{r vine6_visualisation, echo=FALSE}
+
+source("code/sources/visualisation/vine6_visualisation.R")
+
+```
+
+```{r vine7_visualisation, echo=FALSE}
+
+source("code/sources/visualisation/vine_visualisation7.R")
+
+```
+
+```{r vine8_visualisation, echo=FALSE}
+
+source("code/sources/visualisation/vine8_visualisation.R")
+
+```
+
+```{r vine9_visualisation, echo=FALSE}
+
+source("code/sources/visualisation/vine9_visualisation.R")
 
 ```
