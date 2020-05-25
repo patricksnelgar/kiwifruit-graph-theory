@@ -48,3 +48,4 @@ vine5_fruit_data %<>%
 vine5_fruit_data %<>%
 	mutate(taste_bin = cut(DryMatter, c(0, 16.1, 17.4, 17.9, Inf), include.lowest = TRUE, labels = c("Under MTS", "M band", "T band", "Y band")),
 		   dm_bins = cut(DryMatter, seq(0, 30, by = 1), include.lowest = TRUE, labels = paste((0:29), "to", (1:30))))
+

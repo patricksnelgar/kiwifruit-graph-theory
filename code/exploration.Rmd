@@ -32,7 +32,9 @@ quadrant_labels <- data.frame(x = rep(c(-1250, -750, -250, 250, 750, 1250), each
 							  y = rep(c(2500, 1500, 500, -500, -1500, -2500), 6),
 							  label = 1:36)
 
-flowering_dates <- read_csv("input/flowering_dates.csv")
+flowering_dates <- read_csv("input/flowering_dates.csv") %>%
+					mutate(FloweringColour = tolower(FloweringColour),
+						   FloweringDate = dmy(FloweringDate))
 
 ```
 
@@ -68,43 +70,7 @@ pointYOffset <- function (central_ypoint, radius, point_pos){
 
 ```{r all_vines_plot, echo = FALSE}
 
-all_fruit_data <- bind_rows(vine1_fruit_data, vine4_fruit_data, vine5_fruit_data, vine6_fruit_data, vine7_fruit_data, vine8_fruit_data, vine9_fruit_data) %>%
-					mutate(dm_bins = cut(DryMatter, seq(0, 30, by = 1), include.lowest = TRUE, labels = paste((0:29), "to", (1:30))))
-
-all_arch_data <- bind_rows(mutate(vine1_links, Vine = 1),
-						   mutate(vine4_links, Vine = 4),
-						   mutate(vine5_links, Vine = 5),
-						   mutate(vine6_links, Vine = 6),
-						   mutate(vine7_links, Vine = 7),
-						   mutate(vine8_links, Vine = 8),
-						   mutate(vine9_links, Vine = 9)) 
-
-
-vine_labels <- paste("Vine", c(1,4:9))
-names(vine_labels) <- c(1,4:9)
-					
-ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend))) +
-	geom_segment(aes(x = ystart, y = xstart, xend = yend, yend = xend, size = diameter), colour = "lightgrey") +
-	scale_size_continuous(name = "Segment diameter", breaks = pretty_breaks(10)) +
-	geom_jitter(aes(yend, xend, fill = dm_bins),
-				data = filter(all_fruit_data, !is.na(dm_bins) & DryMatter > 12),
-				alpha = 0.8,
-				size = 4,
-				width = 10,
-				height = 70,
-				shape = 21) +
-	scale_fill_brewer(type = "div", palette = "RdYlBu", direction = "-1") +
-	labs(x = NULL, y = NULL, caption = "Fruit below 12% dm units are excluded (n = 2)") +
-	facet_wrap(~Vine, labeller = labeller(Vine = vine_labels)) +
-	guides(size = FALSE) +
-	ggtitle("Dry Matter by Vine") +
-	theme_bw() +
-	theme(plot.title = element_text(size = 22, hjust = 0.5),
-		  axis.ticks = element_blank(),
-		  axis.text = element_blank(),
-		  strip.text.x = element_text(size = 12))
-	
-ggsave("output/vine 1 & 4 - 9 dry matter map.jpg", width = 20, height = 15)
+source("code/sources/visualisation/all_vines.R")
 
 ```
 
