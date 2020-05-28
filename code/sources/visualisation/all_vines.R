@@ -13,7 +13,7 @@ all_fruit_data <- bind_rows(vine1_fruit_data, vine2_fruit_data, vine3_fruit_data
 		   fw_bins = cut(FreshWeight, c(0, 74, 84, 95, 108, 118, 128, 138, 151, 180, 210, 240), 
 		   			  include.lowest = TRUE, 
 		   			  right = FALSE,
-		   			  labels = c("< 74", paste("count", c(42, 39, 36, 33, 30, 27, 25, 22, 18, 16)))),
+		   			  labels = c("< 74g", paste("count", c(42, 39, 36, 33, 30, 27, 25, 22, 18, 16)))),
 		   hue_bins = cut(Hue1, seq(0, 120, 5), labels = paste(seq(0, 115, 5), "to", seq(5, 120, 5))),
 		   ssc_bins = cut(SSC1, seq(5, 20, 1.5), include.lowest = TRUE, labels = paste(seq(5, 18.5, 1.5), "to", seq(6.5, 20, 1.5))),
 		   firm_bins = cut(Firm1, seq(0, 11, 1), include.lowest = TRUE, labels = paste(0:10, "to", 1:11)))
@@ -153,7 +153,7 @@ ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend)) ) +
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Fresh weight (g)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Fresh weight", type = "div", palette = "RdYlBu", direction = "-1") +
 	labs(x = NULL, y = NULL) +
 	facet_grid(vars(VineRow), vars(VineTreatment), labeller = labeller(VineTreatment = column_labels)) +
 	geom_text(aes(-2200, -2300, label = vine_label), 
@@ -202,7 +202,7 @@ vine1_fw <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 1
 							width = 10,
 							height = 70,
 							shape = 21) +
-				scale_fill_brewer(name = "Fresh weight (g)", type = "div", palette = "RdYlBu", direction = "-1") +
+				scale_fill_brewer(name = "Fresh weight", type = "div", palette = "RdYlBu", direction = "-1") +
 				labs(x = NULL, y = NULL) +
 				guides(size = FALSE) +
 				ggtitle("Fresh weight") +
@@ -221,7 +221,7 @@ vine1_flowering <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vi
 								width = 10,
 								height = 70,
 								shape = 21) +
-					scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "-1") +
+					scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "1") +
 					labs(x = NULL, y = NULL) +
 					guides(size = FALSE) +
 					ggtitle("Flowering") +
@@ -240,7 +240,7 @@ vine1_hue <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Hue") +
@@ -259,7 +259,7 @@ vine1_ssc <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("SSC") +
@@ -278,7 +278,7 @@ vine1_firm <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine ==
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Firmness") +
@@ -325,7 +325,7 @@ vine2_fw <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 2
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Fresh weight (g)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Fresh weight", type = "div", palette = "RdYlBu", direction = "-1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Fresh weight") +
@@ -344,7 +344,7 @@ vine2_flowering <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vi
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Flowering") +
@@ -363,7 +363,7 @@ vine2_hue <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Hue") +
@@ -382,7 +382,7 @@ vine2_ssc <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("SSC") +
@@ -401,7 +401,7 @@ vine2_firm <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine ==
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Firmness") +
@@ -447,7 +447,7 @@ vine3_fw <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 3
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Fresh weight (g)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Fresh weight", type = "div", palette = "RdYlBu", direction = "-1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Fresh weight") +
@@ -466,7 +466,7 @@ vine3_flowering <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vi
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Flowering") +
@@ -485,7 +485,7 @@ vine3_hue <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Hue") +
@@ -504,7 +504,7 @@ vine3_ssc <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("SSC") +
@@ -523,7 +523,7 @@ vine3_firm <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine ==
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Firmness") +
@@ -569,7 +569,7 @@ vine4_fw <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 4
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Fresh weight (g)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Fresh weight", type = "div", palette = "RdYlBu", direction = "-1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Fresh weight") +
@@ -588,7 +588,7 @@ vine4_flowering <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vi
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Flowering") +
@@ -607,7 +607,7 @@ vine4_hue <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Hue") +
@@ -626,7 +626,7 @@ vine4_ssc <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("SSC") +
@@ -645,7 +645,7 @@ vine4_firm <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine ==
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Firmness") +
@@ -691,7 +691,7 @@ vine5_fw <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 5
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Fresh weight (g)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Fresh weight", type = "div", palette = "RdYlBu", direction = "-1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Fresh weight") +
@@ -710,7 +710,7 @@ vine5_flowering <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vi
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Flowering") +
@@ -729,7 +729,7 @@ vine5_hue <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Hue") +
@@ -748,7 +748,7 @@ vine5_ssc <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("SSC") +
@@ -767,7 +767,7 @@ vine5_firm <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine ==
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Firmness") +
@@ -813,7 +813,7 @@ vine6_fw <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 6
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Fresh weight (g)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Fresh weight", type = "div", palette = "RdYlBu", direction = "-1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Fresh weight") +
@@ -832,7 +832,7 @@ vine6_flowering <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vi
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Flowering") +
@@ -851,7 +851,7 @@ vine6_hue <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Hue") +
@@ -870,7 +870,7 @@ vine6_ssc <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("SSC") +
@@ -889,7 +889,7 @@ vine6_firm <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine ==
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Firmness") +
@@ -935,7 +935,7 @@ vine7_fw <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 7
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Fresh weight (g)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Fresh weight", type = "div", palette = "RdYlBu", direction = "-1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Fresh weight") +
@@ -954,7 +954,7 @@ vine7_flowering <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vi
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Flowering") +
@@ -973,7 +973,7 @@ vine7_hue <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Hue") +
@@ -992,7 +992,7 @@ vine7_ssc <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("SSC") +
@@ -1011,7 +1011,7 @@ vine7_firm <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine ==
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Firmness") +
@@ -1025,7 +1025,7 @@ cowplot::plot_grid(vine7_dm, vine7_fw, vine7_flowering, vine7_hue, vine7_ssc, vi
 				   hjust = -0.1,
 				   label_size = 24)
 
-ggsave("output/vine 7/vine7_all_metrics.jpg", width = 30, height = 16)	
+ggsave("output/vine 7/vine7_all_metrics.jpg", width = 30, height = 16)
 #### vine 8 - all metrics ####
 
 vine8_dm <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 8)) +
@@ -1057,7 +1057,7 @@ vine8_fw <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 8
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Fresh weight (g)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Fresh weight", type = "div", palette = "RdYlBu", direction = "-1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Fresh weight") +
@@ -1076,7 +1076,7 @@ vine8_flowering <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vi
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Flowering") +
@@ -1095,7 +1095,7 @@ vine8_hue <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Hue") +
@@ -1114,7 +1114,7 @@ vine8_ssc <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("SSC") +
@@ -1133,7 +1133,7 @@ vine8_firm <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine ==
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Firmness") +
@@ -1179,7 +1179,7 @@ vine9_fw <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 9
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Fresh weight (g)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Fresh weight", type = "div", palette = "RdYlBu", direction = "-1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Fresh weight") +
@@ -1198,7 +1198,7 @@ vine9_flowering <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vi
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Flowering date", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Flowering") +
@@ -1217,7 +1217,7 @@ vine9_hue <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Hue", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Hue") +
@@ -1236,7 +1236,7 @@ vine9_ssc <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine == 
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "SSC (brix)", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("SSC") +
@@ -1255,7 +1255,7 @@ vine9_firm <- ggplot(filter(all_arch_data, !is.na(xend) & !is.na(yend) & Vine ==
 				width = 10,
 				height = 70,
 				shape = 21) +
-	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "-1") +
+	scale_fill_brewer(name = "Firmness", type = "div", palette = "RdYlBu", direction = "1") +
 	labs(x = NULL, y = NULL) +
 	guides(size = FALSE) +
 	ggtitle("Firmness") +
