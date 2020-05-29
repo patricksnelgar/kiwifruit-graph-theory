@@ -3,7 +3,8 @@ vine1_data <- read_csv("input/kiwimac_data_vine1.csv") %>%
 	mutate(to_shoot_id = ifelse(!is.na(to_shoot_id), paste(vine_id, to_shoot_id, sep = "-"), NA),
 		   cane_id = ifelse(!is.na(cane_id), paste(vine_id, cane_id, sep = "-"), NA),
 		   to_origin_id = ifelse(!is.na(to_origin_id), paste(vine_id, to_origin_id, sep = "-"), NA),
-		   base_origin_id = ifelse(!is.na(base_origin_id), paste(vine_id, base_origin_id, sep = "-"), NA))
+		   base_origin_id = ifelse(!is.na(base_origin_id), paste(vine_id, base_origin_id, sep = "-"), NA),
+		   volume_ml = ((pi * (diameter/2)^2) * length)/1000)
 
 vine1_sources <- vine1_data %>%
 	distinct(from) %>%
@@ -15,7 +16,7 @@ vine1_targets <- vine1_data %>%
 
 vine1_nodes <- full_join(vine1_sources, vine1_targets, by = "label") %>%
 	arrange(label) %>%
-	full_join(select(vine1_data, to, length, to_shoot_id, x, y, quadrant, cane_id, to_origin_id, base_origin_id, notes), by = c("label" = "to"))
+	full_join(select(vine1_data, to, length, to_shoot_id, x, y, quadrant, cane_id, to_origin_id, base_origin_id, notes, volume_ml), by = c("label" = "to"))
 
 vine1_nodes %<>% 
 	mutate(target_type = ifelse(!is.na(to_shoot_id), "Shoot", ifelse(!is.na(to_origin_id), "Origin","Junction"))) %>%
@@ -60,5 +61,86 @@ ggraph(vine1_graph, 'tree') +
 	theme(text = element_text(size = 14), title = element_text(size = 18))
 
 ggsave("output/graphs/kiwimac_vine1.png", width = 35, height = 20)
+
+
+#####
+# really basic
+
+length.sum <- vine1_data %>%
+	group_by(base_origin_id, orientation) %>%
+	summarise(total.length = sum(length), total.volume = sum(volume_ml))
+
+
+# using tidygraph commands. See https://rviews.rstudio.com/2019/03/06/intro-to-graph-analysis/ for more info on the below code
+
+# find total 'cost' of each origin (i.e. amount of structural wood)
+vine1_graph %>%
+	activate(edges) %>%
+	filter(base_origin_id == "1-2") %>% 
+	as_tibble() %>%
+	summarise(
+		number_of_nodes = n() - 1,
+		length_sum = sum(length),
+		volume_sum = sum(volume_ml))
+
+
+# plotting shortest distance between nodes. Also from https://rviews.rstudio.com/2019/03/06/intro-to-graph-analysis/ 
+
+shortest <- vine1_graph %>%
+	morph(to_shortest_path, 
+		  (which(to_origin_id == "1-11")),   # name origin to follow path to
+		  (which(to_shoot_id == "1-107")),  # name shoot to follow path from 
+		  weights = volume_ml) %>%
+	mutate(selected_node = TRUE) %>%
+	activate(edges) %>%
+	mutate(selected_edge = TRUE) %>%
+	unmorph() %>%
+	activate(nodes) %>%
+	mutate(selected_node = ifelse(is.na(selected_node), 1, 2)) %>%
+	activate(edges) %>%
+	mutate(selected_edge = ifelse(is.na(selected_edge), 1, 2)) %>%
+	arrange(selected_edge)
+
+# plot shortest path
+shortest %>%
+	ggraph(layout = "tree") +
+	geom_edge_diagonal(aes(alpha = selected_edge), color = "black") +
+	geom_node_text(aes(label = target_label, color = target_type, alpha = selected_node ), size = 6) 
+
+# find value of shortest path
+tmp <- shortest %>%
+	activate(edges) %>%
+	filter(selected_edge == 2) %>%
+	as_tibble() %>%
+	summarise(
+		number_of_nodes = n(),
+		length_sum = sum(length),
+		diameter_sum = sum(diameter),
+		diameter_mean = mean(diameter),
+		volume_sum = sum(volume_ml))
+
+
+
+##### 
+
+# another version from https://kateto.net/netscix2016.html
+
+tmp.path <- shortest_paths(vine1_graph_tmp,
+							from = V(vine1_graph_tmp),
+							to  = V(vine1_graph_tmp),
+							weights = E(vine1_graph_tmp))#,
+							#output = "both") # both path nodes and edges
+
+tmp <- unlist(get.shortest.paths(vine1_graph_tmp, 
+						  from=V(vine1_graph_tmp), 
+						  to=V(vine1_graph_tmp)))
+
+#####
+# more tinkering
+
+tmp <- as_adjacency_matrix(vine1_graph, type = "both", attr = "volume_ml", names = TRUE)
+
+tmp2 <- as.data.frame(as.matrix(tmp))
+
 
 
