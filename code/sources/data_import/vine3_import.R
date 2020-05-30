@@ -32,7 +32,7 @@ vine3_nodes %<>%
 vine3_nodes %<>%
 	full_join(quadrant_info, by = c("quadrant" = "quadrant")) %>%
 	mutate(x_pos = (x + x_offset) * x_multiplier, y_pos = (y + y_offset) * y_multiplier) %>%
-	select(label:to_shoot_id, target_type, origin_target_id, x_pos, y_pos, diameter, to_origin_id) %>%
+	select(label:to_shoot_id, target_type, origin_target_id, x_pos, y_pos, quadrant, diameter, to_origin_id) %>%
 	filter(!is.na(label))
 
 vine3_links <- vine3_data %>%
@@ -43,8 +43,8 @@ vine3_links <- vine3_data %>%
 	rename(xend = x_pos, yend = y_pos) 
 
 vine3_fruit_data %<>%
-	left_join(., select(vine3_links, to_shoot_id, xend, yend), by = c("shoot_id" = "to_shoot_id")) 
+	left_join(., select(vine3_links, to_shoot_id, xend, yend, quadrant), by = c("shoot_id" = "to_shoot_id")) 
 
 vine3_fruit_data %<>%
-	mutate(taste_bin = cut(DryMatter, c(0, 16.1, 17.4, 17.9, Inf), include.lowest = TRUE, labels = c("Under MTS", "M band", "T band", "Y band")),
-		   dm_bins = cut(DryMatter, seq(0, 30, by = 1), include.lowest = TRUE, labels = paste((0:29), "to", (1:30))))
+	rename(ShootUUID = shoot_id) %>%
+	select(Vine:FruitUUID, ShootUUID, xend:quadrant, FruitPos:Comments)

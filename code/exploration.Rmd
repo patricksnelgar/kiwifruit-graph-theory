@@ -21,6 +21,8 @@ library(ggplot2)
 library(gplots)
 library(lubridate)
 library(scales)
+
+redo <- FALSE
 ```
 
 
@@ -40,15 +42,31 @@ flowering_dates <- read_csv("input/flowering_dates.csv") %>%
 
 ```{r vine_data_import, echo = FALSE}
 
-source("code/sources/data_import/vine1_import.R")
-source("code/sources/data_import/vine2_import.R")
-source("code/sources/data_import/vine3_import.R")
-source("code/sources/data_import/vine4_import.R")
-source("code/sources/data_import/vine5_import.R")
-source("code/sources/data_import/vine6_import.R")
-source("code/sources/data_import/vine7_import.R")
-source("code/sources/data_import/vine8_import.R")
-source("code/sources/data_import/vine9_import.R")
+if(!file.exists("workspace/all_fruit_data.csv") || !file.exists("workspace/all_arch_data.csv") || redo){
+	
+	relative_qaudrants <- data.frame(quadrant = c(1:36), 
+								 QuadrantFromLeader = rep(c(3:1, 1:3), 6),
+								 QuadrantFromTrunk = rep(c(3:1, 1:3), each = 6))
+	
+	source("code/sources/data_import/vine1_import.R")
+	source("code/sources/data_import/vine2_import.R")
+	source("code/sources/data_import/vine3_import.R")
+	source("code/sources/data_import/vine4_import.R")
+	source("code/sources/data_import/vine5_import.R")
+	source("code/sources/data_import/vine6_import.R")
+	source("code/sources/data_import/vine7_import.R")
+	source("code/sources/data_import/vine8_import.R")
+	source("code/sources/data_import/vine9_import.R")
+	
+	
+	source("code/sources/merge_vine_data.R")
+	
+	
+	
+} else {
+	all_fruit_data <- read_csv("workspace/all_fruit_data.csv")
+	all_arch_data <- read_csv("workspace/all_arch_data.csv")
+}
 
 
 ```
@@ -70,7 +88,7 @@ pointYOffset <- function (central_ypoint, radius, point_pos){
 
 ```{r all_vines_plot, echo = FALSE}
 
-source("code/sources/visualisation/all_vines.R")
+source("code/sources/visualisation/all_vines_fruit_metrics.R")
 
 ```
 

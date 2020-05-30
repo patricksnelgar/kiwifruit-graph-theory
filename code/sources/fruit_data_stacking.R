@@ -26,7 +26,7 @@ for(vine_id in 1:9){
 		left_join(flowering_dates, c("FloweringColour" = "FloweringColour")) %>%
 		rename(Quadrant = quadrant) %>%
 		select(Vine:TrayFruit, FruitUUID, ShootUUID:QuadrantFromTrunk, 
-			   FruitPos:FloweringColour, FloweringDate, SubTLeaf:EmptySeedCountSub)
+			   FruitPos:FloweringColour, FloweringDate, SubTLeaf:Comments)
 	
 	if(is.null(all_fruit_data))
 		all_fruit_data <- fruit_data
