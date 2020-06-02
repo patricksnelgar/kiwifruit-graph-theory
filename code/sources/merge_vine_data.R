@@ -40,7 +40,7 @@ all_arch_data <- bind_rows(mutate(vine1_links, Vine = 1),
 
 
 all_fruit_data %<>%
-	left_join(relative_qaudrants, by = c("quadrant" = "quadrant")) %>%
+	left_join(relative_quadrants, by = c("quadrant" = "quadrant")) %>%
 	select(Vine:quadrant, QuadrantFromLeader, QuadrantFromTrunk, FruitPos:firm_bins)
 
 write_csv(all_fruit_data, "workspace/all_fruit_data.csv")

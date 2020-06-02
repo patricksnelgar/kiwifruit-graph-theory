@@ -21,6 +21,8 @@ library(ggplot2)
 library(gplots)
 library(lubridate)
 library(scales)
+
+source("code/theme.R")
 ```
 
 
@@ -47,7 +49,7 @@ relative_quadrants <- data.frame(quadrant = c(1:36),
 
 if(!file.exists("workspace/all_fruit_data.csv") || !file.exists("workspace/all_arch_data.csv") || redo){
 	
-	
+
 	source("code/sources/data_import/vine1_import.R")
 	source("code/sources/data_import/vine2_import.R")
 	source("code/sources/data_import/vine3_import.R")

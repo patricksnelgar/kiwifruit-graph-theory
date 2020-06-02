@@ -1,6 +1,4 @@
 
-
-
 grid_quadrants <- data.frame(row = rep(1:6, each = 6), column = rep(1:6, 6), quadrant = 1:36)
 
 summarised_fruit_data <- all_fruit_data %>%
@@ -17,23 +15,46 @@ summarised_fruit_data %>%
 		facet_wrap(~Vine)
 
 summarised_fruit_data %>%
-	left_join(grid_quadrants, by = c("quadrant" = "quadrant")) %>%
 	ggplot() +
-		geom_bin2d(aes(column, row, fill = avg_dm), stat = "identity")
+		geom_bin2d(aes(column, row, fill = dm_bins), stat = "identity") + 
+		scale_fill_brewer(name = "Dry matter (%)", type = "div", palette = "RdYlBu", direction = "-1") + 
+		geom_text(aes(column, row, label = quadrant), alpha = 0.5) +
+		ggtitle("Average dry matter by quadrant - All vines") + 
+		labs(x = NULL, y = NULL) +
+		theme_patrick() +
+		theme(axis.text.x = element_blank(), axis.text.y = element_blank())
 
+ggsave("output/all_vines/Average dry matter by quadrant - all vines.jpg", width = 12, height = 8)
 
 summarised_fruit_data %>%
-	left_join(grid_quadrants, by = c("quadrant" = "quadrant")) %>%
 	ggplot() +
 	geom_bin2d(aes(column, row, fill = dm_bins), stat = "identity") +
 	scale_fill_brewer(name = "Dry matter (%)", type = "div", palette = "RdYlBu", direction = "-1") +
+	geom_text(aes(column, row, label = quadrant)) +
 	facet_wrap(~Vine) + 
-	ggtitle("Average Dry matter by quadrant, by vine") +
-	theme_bw()
+	ggtitle("Average dry matter by quadrant, by vine") +
+	theme_patrick() + 
+	theme(axis.text.x = element_blank(), axis.text.y = element_blank())
 
+ggsave("output/all_vines/Average dry matter by quadrant by vines.jpg", width = 12, height = 8)
+
+#### trying linear model for dry matter vs quadrant from leader ####
+tmp_dm <- filter(summarised_fruit_data, Vine == 1)$avg_dm
+tmp_quad <- filter(summarised_fruit_data, Vine == 1)$QuadrantFromLeader
+
+dm_reg <- lm(tmp_dm ~ tmp_quad)
+dm_reg_summary <- summary(dm_reg)
 
 summarised_fruit_data %>%
+	filter(Vine == 1) %>%
 	ggplot() +
 		geom_point(aes(QuadrantFromLeader, avg_dm)) +
-		theme_bw()
+		geom_line(aes(tmp_quad, predict(dm_reg, newdata = data.frame(tmp_quad = c(1:3)))), data = data.frame(tmp_quad = c(1:3)), colour = "blue") +
+		labs(caption = 
+			 	bquote(~R^2 ~ "=" ~ .(format(dm_reg_summary$r.squared, digits = 3)) ~ 
+			 		   	"    Adjusted" ~ R^2 ~ "=" ~ .(format(dm_reg_summary$adj.r.squared, digits = 3)))) +
+		ggtitle("Linear regression of dry matter vs relative quadrant from leader - Vine 1") +
+		theme_patrick()
+
+ggsave("output/vine 1/Dry matter vs relative quadrant from leader.jpg", width = 12, height = 8)
 
