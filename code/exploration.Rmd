@@ -28,7 +28,15 @@ source("code/theme.R")
 
 ```{r misc_data_import, echo = FALSE}
 
-quadrant_info <- read_csv("input/quadrant_info.csv")
+quadrant_info <- read_csv("input/quadrant_info.csv") %>%
+					mutate(QuadrantFromLeader = rep(c(3:1, 1:3), 6), 
+						   QuadrantFromTrunk = rep(c(3:1, 1:3), each = 6),
+						   EastWest = rep(rep(
+					   						  c("W", "E"), 
+					   						  each = 3
+					   						  ),
+						   			   	  6)
+						   )
 
 quadrant_labels <- data.frame(x = rep(c(-1250, -750, -250, 250, 750, 1250), each = 6),
 							  y = rep(c(2500, 1500, 500, -500, -1500, -2500), 6),
