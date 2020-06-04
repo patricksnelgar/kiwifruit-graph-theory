@@ -1,7 +1,3 @@
-relative_quadrants <- data.frame(quadrant = c(1:36), 
-								 QuadrantFromLeader = rep(c(3:1, 1:3), 6),
-								 QuadrantFromTrunk = rep(c(3:1, 1:3), each = 6))
-
 source("code/sources/data_import/vine1_import.R")
 source("code/sources/data_import/vine2_import.R")
 source("code/sources/data_import/vine3_import.R")
@@ -14,11 +10,6 @@ source("code/sources/data_import/vine9_import.R")
 
 
 source("code/sources/merge_vine_data.R")
-
-
-quadrant_
-
-
 
 
 
@@ -44,7 +35,11 @@ for(vine_num in 1:9) {
 
 
 all_shoot_data %<>%
-	left_join(select(all_arch_data, to_shoot_id, origin_target_id, quadrant), by = c("ShootUUID" = "to_shoot_id")) %>%
-	left_join()
-	rename(OriginID = origin_target_id, Quadrant = quadrant)
-	
+	left_join(select(all_arch_data, to_shoot_id, origin_target_id, cane_id, quadrant), by = c("ShootUUID" = "to_shoot_id")) %>%
+	left_join(select(quadrant_info, quadrant, QuadrantFromLeader:NorthSouth), by = c("quadrant" = "quadrant")) %>%
+	select(Vine:ShootDiameter, origin_target_id:NorthSouth, Notes) %>%
+	rename(OriginTargetID = origin_target_id, 
+		   CaneID = cane_id, 
+		   Quadrant = quadrant)
+
+write_csv(all_shoot_data, "workspace/all_shoot_data.csv")	
