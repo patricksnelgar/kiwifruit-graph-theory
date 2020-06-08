@@ -32,7 +32,7 @@ vine7_nodes %<>%
 vine7_nodes %<>%
 	full_join(quadrant_info, by = c("quadrant" = "quadrant")) %>%
 	mutate(x_pos = (x + x_offset) * x_multiplier, y_pos = (y + y_offset) * y_multiplier) %>%
-	select(label:to_shoot_id, target_type, origin_target_id, x_pos, y_pos, quadrant, diameter, to_origin_id) %>%
+	select(label:to_shoot_id, cane_id, target_type, origin_target_id, x_pos, y_pos, quadrant, diameter, to_origin_id) %>%
 	filter(!is.na(label))
 
 vine7_links <- vine7_data %>%
@@ -43,8 +43,8 @@ vine7_links <- vine7_data %>%
 	rename(xend = x_pos, yend = y_pos) 
 
 vine7_fruit_data %<>%
-	left_join(., select(vine7_links, to_shoot_id, xend, yend, quadrant), by = c("shoot_id" = "to_shoot_id")) 
+	left_join(., select(vine7_links, to_shoot_id, cane_id, xend, yend, quadrant), by = c("shoot_id" = "to_shoot_id")) 
 
 vine7_fruit_data %<>%
-	rename(ShootUUID = shoot_id) %>%
-	select(Vine:FruitUUID, ShootUUID, xend:quadrant, FruitPos:Comments)
+	rename(ShootUUID = shoot_id, CaneID = cane_id) %>%
+	select(Vine:FruitUUID, ShootUUID, CaneID, xend:quadrant, FruitPos:Comments)

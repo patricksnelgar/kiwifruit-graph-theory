@@ -52,6 +52,17 @@ flowering_dates <- read_csv("input/flowering_dates.csv") %>%
 ```{r vine_data_import, echo = FALSE}
 redo <- TRUE
 
+seed_counts <- read_csv("input/fruit_data/seed_counts.csv") %>%
+				rename(SampleID = 1,
+					   TrayPosition = 2,
+					   TrayID = 3,
+					   FruitID = 4,
+					   SubsampleSeed = 5,
+					   TotalSeedWeight = 6,
+					   AverageSeedCount = 7,
+					   SeedComments = 8) %>%
+				mutate(FruitID = gsub("([1-9])([0-9]*)", "\\1-\\2", FruitID))
+
 if(!file.exists("workspace/all_fruit_data.csv") || !file.exists("workspace/all_arch_data.csv") || redo){
 	
 
@@ -68,7 +79,12 @@ if(!file.exists("workspace/all_fruit_data.csv") || !file.exists("workspace/all_a
 	
 	source("code/merge_vine_data.R")
 	
+	all_fruit_data %<>%
+		mutate(FruitUUID = gsub("([1-9])([0-9]*)", "\\1-\\2", FruitUUID))%>%
+		left_join(select(seed_counts, 1:8), by = c("FruitUUID" = "FruitID"))
 	
+	write_csv(all_fruit_data, "workspace/all_fruit_data.csv")
+	write_csv(all_arch_data, "workspace/all_arch_data.csv")
 	
 } else {
 	all_fruit_data <- read_csv("workspace/all_fruit_data.csv")

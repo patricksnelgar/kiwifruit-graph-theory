@@ -21,5 +21,4 @@ all_fruit_data %<>%
 	left_join(select(quadrant_info, quadrant, QuadrantFromLeader:NorthSouth), by = c("quadrant" = "quadrant")) %>%
 	select(Vine:quadrant, QuadrantFromLeader:NorthSouth, FruitPos:FloweringColour, FloweringDate, SubTLeaf:Comments)
 
-write_csv(all_fruit_data, "workspace/all_fruit_data.csv")
-write_csv(all_arch_data, "workspace/all_arch_data.csv")
+
