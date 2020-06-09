@@ -23,6 +23,13 @@ library(lubridate)
 library(scales)
 
 source("code/theme.R")
+
+# checking for output folder
+if(!dir.exists("output"))
+	dir.create("output")
+
+if(!dir.exists("workspace"))
+	dir.create("workspace")
 ```
 
 
