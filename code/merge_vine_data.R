@@ -1,6 +1,7 @@
 all_fruit_data <- bind_rows(vine1_fruit_data, vine2_fruit_data, vine3_fruit_data,
 							vine4_fruit_data, vine5_fruit_data, vine6_fruit_data, 
-							vine7_fruit_data, vine8_fruit_data, vine9_fruit_data)
+							vine7_fruit_data, vine8_fruit_data, vine9_fruit_data) %>%
+					rename(FloweringColour = Flowering)
 
 all_fruit_data %<>%
 	left_join(flowering_dates, by = c("FloweringColour" = "FloweringColour"))

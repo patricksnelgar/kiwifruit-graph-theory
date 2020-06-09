@@ -46,5 +46,5 @@ vine5_fruit_data %<>%
 	left_join(., select(vine5_links, to_shoot_id, cane_id, xend, yend, quadrant), by = c("shoot_id" = "to_shoot_id")) 
 
 vine5_fruit_data %<>%
-	rename(ShootUUID = shoot_id, CaneID = cane_id) %>%
+	rename(FruitUUID = FruitID, ShootUUID = shoot_id, CaneID = cane_id) %>%
 	select(Vine:FruitUUID, ShootUUID, CaneID, xend:quadrant, FruitPos:Comments)
