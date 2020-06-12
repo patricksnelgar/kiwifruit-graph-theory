@@ -70,7 +70,9 @@ seed_counts <- read_csv("input/fruit_data/seed_counts.csv") %>%
 					   SeedComments = 8) %>%
 				mutate(FruitID = gsub("([1-9])([0-9]*)", "\\1-\\2", FruitID))
 
-if(!file.exists("workspace/all_fruit_data.csv") || !file.exists("workspace/all_arch_data.csv") || redo){
+if(!file.exists(c("workspace/all_fruit_data.csv", 
+				  "workspace/all_arch_data.csv", 
+				  "workspace/all_shoot_data.csv")) || redo){
 	
 	##### CLEAN THIS SHIT UP ######
 	# source("code/data_import/vine1_import.R")
