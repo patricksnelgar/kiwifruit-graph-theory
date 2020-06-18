@@ -1,4 +1,4 @@
-vine_id,from,to,length,to_shoot_id,spur,cane_id,x,y,quadrant,diameter,to_origin_id,orientation,base_origin_id,notes
+vine_id,from,to,length,to_shoot_id,spurs,cane_id,x,y,quadrant,diameter,to_origin_id,orientation,base_origin_id,notes
 2,1,2,110,,,,430,130,4,32.4,,E,1,
 2,2,3,20,,,,470,130,4,38.46,,E,1,
 2,3,4,20,,,,470,130,4,17.53,,E,1,
@@ -272,7 +272,7 @@ vine_id,from,to,length,to_shoot_id,spur,cane_id,x,y,quadrant,diameter,to_origin_
 2,271,272,90,218,,5,90,560,19,15.32,,W,10,
 2,273,253,400,,,,230,20,15,64.58,10,,10,girdle to origin
 2,274,273,920,,,,20,20,16,51.74,,,,graft to girdle
-2,275,274,540,,,,0,0,16,116.02,,,,ground to graft
+2,275,274,540,,,,0,0,16,116.02,trunk,,,ground to graft
 2,274,276,910,,,,90,50,22,50.54,,,,graft to girdle
 2,276,277,370,,,,360,60,22,64.88,11,,11,girdle to origin
 2,277,278,140,,,,370,150,22,35.43,,E,11,

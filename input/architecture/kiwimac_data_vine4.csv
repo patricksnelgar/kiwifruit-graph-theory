@@ -249,7 +249,7 @@ vine_id,from,to,length,to_shoot_id,spurs,cane_id,x,y,quadrant,diameter,to_origin
 4,248,249,100,180,,14,60,570,12,12.57,,E,11,
 4,250,209,190,,,,20,40,15,68.76,11,,11,girdle to origin
 4,251,250,890,,.,,10,40,15,47.5,,,,graft to girdle
-4,252,251,490,,,,0,0,15,134.1,,,,ground to graft
+4,252,251,490,,,,0,0,15,134.1,trunk,,,ground to graft
 4,251,253,920,,,,20,100,22,41.23,,,,graft to girdle
 4,253,254,280,,,,120,120,22,52.48,12,,12,girdle to origin
 4,254,255,380,,,,190,420,22,24.73,,E,12,
