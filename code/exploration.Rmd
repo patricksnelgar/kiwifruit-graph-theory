@@ -9,72 +9,159 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 
-require(tidygraph)
-require(tidyverse)
-require(ggraph)
-require(magrittr)
-require(igraph)
-require(gganimate)
-require(htmlwidgets)
-require(plotly)
-require(gganimate)
+library(tidygraph)
+library(tidyverse)
+library(ggraph)
+library(magrittr)
+library(htmlwidgets)
+library(plotly)
+library(ggplot2)
+library(gplots)
+library(lubridate)
+library(scales)
+library(cowplot)
+
+source("code/theme.R")
+
+# checking for output folder
+if(!dir.exists("output")){
+	dir.create("output")
+	for(i in 1:9)
+		dir.create(paste("output/Vine", i))
+}
+
+if(!dir.exists("workspace"))
+	dir.create("workspace")
 ```
 
-```{r data-import, echo=FALSE}
 
-quadrant_info <- read_csv("input/quadrant-info.csv")
+```{r misc_data_import, echo = FALSE}
 
+quadrant_info <- read_csv("input/quadrant_info.csv") %>%
+					mutate(QuadrantFromLeader = rep(c(3:1, 1:3), 6), 
+						   QuadrantFromTrunk = rep(c(3:1, 1:3), each = 6),
+						   EastWest = rep(rep(
+					   						  c("W", "E"), 
+					   						  each = 3
+					   						  ),
+						   			   	  6),
+						   NorthSouth = rep(c("S", "N"), each = 18)
+						   )
+
+# x&y coords for overlaying the quadrant IDs
+# only works when vine is plotted with leader running horizontal.
 quadrant_labels <- data.frame(x = rep(c(-1250, -750, -250, 250, 750, 1250), each = 6),
 							  y = rep(c(2500, 1500, 500, -500, -1500, -2500), 6),
 							  label = 1:36)
 
-```
-```{r vine2_fake_data}
-#' Create list of only shoot IDs
-#'  then generate random # of fruit per shoot 9inc 0's)
-#' temp_rep is used to keep the shoot id when generating the fruit data frame 
-#'  so it keeps ALL shoot ids even if there is 'no' fruit on that shoot
-shoot_data <- vine2_data %>%
-				filter(!is.na(to_shoot_id)) %>%
-				select(to_shoot_id) %>%
-				mutate(num_fruit = as.integer(runif(length(to_shoot_id), 0, 6))) %>%
-				mutate(temp_rep = replace(num_fruit, which(num_fruit == 0), 1))
-				
-
-fruit_data <- shoot_data[rep(row.names(shoot_data), shoot_data$temp_rep), 1:2] %>%
-				mutate(fruit_id = ifelse(num_fruit != 0, paste("2-", 1:length(to_shoot_id)), NA)) %>%
-				mutate(dm = ifelse(num_fruit > 0, runif(length(!is.na(fruit_id)), 16,19), NA)) %>%
-				mutate(fw = ifelse(num_fruit > 0, runif(length(!is.na(fruit_id)), 120, 150), NA))
-```
-```{r vine1, echo=FALSE}
-
-source("./sources/vine1.R")
-
-```
-<!--
-vine1.Rmd
--->
-
-```{r vine2, echo=FALSE}
-
-source("./sources/vine2.R")
+flowering_dates <- read_csv("input/flowering_dates.csv") %>%
+					mutate(FloweringColour = tolower(FloweringColour),
+						   FloweringDate = dmy(FloweringDate))
 
 ```
 
-```{r vine3, echo=FALSE}
+```{r vine_data_import, echo = FALSE}
+redo <- TRUE
 
-source("./sources/vine3.R")
+
+if(!file.exists(c("workspace/all_fruit_data.csv", 
+				  "workspace/all_arch_data.csv", 
+				  "workspace/all_shoot_data.csv")) || redo){
+	
+	source("code/data_import/architecture_data_import_and_merge.R")
+	source("code/data_import/shoot_data_import_and_merge.R")
+	source("code/data_import/fruit_data_import_and_merge.R")
+	
+	source("code/data_import/fruit_exclusions.R")
+
+	
+	write_csv(all_fruit_data, "workspace/all_fruit_data.csv", na = "")
+	write_csv(all_arch_data, "workspace/all_arch_data.csv", na = "")
+	write_csv(all_shoot_data, "workspace/all_shoot_data.csv", na = "")
+	
+} else {
+	# Need to set column types for all as only the first 1000 rows are used for
+	# imputing types which doesnt work for scarce columns (seed counts etc.)
+	all_fruit_data <- read_csv("workspace/all_fruit_data.csv", col_types = "dddccccddcDcddddddddddddddddccc")
+	all_arch_data <- read_csv("workspace/all_arch_data.csv", col_types = "dddccccdddddddddcc")
+	all_shoot_data <- read_csv("workspace/all_shoot_data.csv", col_types = "dcdddccccdc")
+}
+
+
+	# Factors that allow for fixing vine positions in grid plots
+	all_arch_data %<>%
+		mutate(VineTreatmentOrder = factor(VineUUID, levels = c(1, 2, 3, 4, 6, 5, 9, 8, 7)),
+			   VineTreatment = ifelse(VineUUID %in% c(1, 4, 9), "1 Conv", 
+			   					   ifelse(VineUUID %in% c(2, 6, 8), "2 Stru",
+			   					   	   ifelse(VineUUID %in% c(3, 5, 7), "3 Spur", NA))),
+			   VineRow = ifelse(VineUUID %in% c(1:3), 1,
+			   				 ifelse(VineUUID %in% c(4:6), 2,
+			   				 	   ifelse(VineUUID %in% c(7:9), 3, NA)))) 
+	
+	
+	# Pull in x&y coords 
+	all_fruit_data %<>%
+		left_join(select(all_arch_data, ShootUUID, SegmentEndX, SegmentEndY))
+
+	
+	# Factors that allow for fixing vine positions in grid plots
+	# and 'binning' fruit metrics for visual display
+	all_fruit_data %<>%
+		mutate(VineTreatmentOrder = factor(VineUUID, levels = c(1, 2, 3, 4, 6, 5, 9, 8, 7)),
+		   	   VineTreatment = ifelse(VineUUID %in% c(1, 4, 9), "1 Conv", 
+		   					   ifelse(VineUUID %in% c(2, 6, 8), "2 Stru",
+		   					   ifelse(VineUUID %in% c(3, 5, 7), "3 Spur", NA))),
+		   	   VineRow = ifelse(VineUUID %in% c(1:3), 1,
+		   				 ifelse(VineUUID %in% c(4:6), 2,
+		   				 ifelse(VineUUID %in% c(7:9), 3, NA)))) %>%
+		mutate(dm_bins = cut(DryMatter, c(0,14:23,30), 
+							 include.lowest = TRUE, 
+							 labels = c("< 14", paste(14:22, "to", 15:23), "> 23")),
+		   	   fw_bins = cut(FreshWeight, c(0, 74, 84, 95, 108, 118, 128, 138, 151, 180, 210, 240), 
+		   			         include.lowest = TRUE, 
+		   			  		 right = FALSE,
+		   			  		 labels = c("< 74g", paste("count", c(42, 39, 36, 33, 30, 27, 25, 22, 18, 16)))),
+		       hue_bins = cut(HueAngle1, seq(0, 120, 5), 
+		       			  	  labels = paste(seq(0, 115, 5), "to", seq(5, 120, 5))),
+			   ssc_bins = cut(SoluableSolidsContent, seq(5, 20, 1.5), 
+			   			      include.lowest = TRUE, 
+			   			      labels = paste(seq(5, 18.5, 1.5), "to", seq(6.5, 20, 1.5))),
+		       firm_bins = cut(Firmness1, seq(0, 11, 1), 
+		       				   include.lowest = TRUE, 
+		       				   labels = paste(0:10, "to", 1:11)))
+
 
 ```
 
-```{r vine4, echo=FALSE}
+```{r functions, echo = FALSE}
 
-source("./sources/vine4.R")
+# maximum 9 fruit per shoot
+angle <- 2 * pi / 9
+
+pointXOffset <- function (central_xpoint, radius, point_pos){
+	return(central_xpoint + radius * cos(point_pos * angle))
+}
+
+pointYOffset <- function (central_ypoint, radius, point_pos){
+	return(central_ypoint + radius * sin(point_pos * angle))
+}
 
 ```
 
-```{r vine5, echo=FALSE}
+```{r all_vines_plot, echo = FALSE}
 
-source("./sources/vine5.R")
+source("code/visualisation/fruit_metrics/all_vines_fruit_metrics.R")
+
+```
+
+```{r individual_vine_fruit_metrics, echo = FALSE}
+
+source("code/visualisation/fruit_metrics/individual_vine_fruit_metrics.R")
+
+```
+
+```{r vine_architectures, echo = FALSE}
+
+source("code/visualisation/vine_architectures.R")
 
 ```
