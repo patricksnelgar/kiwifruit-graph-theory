@@ -54,8 +54,10 @@ if(length(all_arch_data) <= 1){
 	
 	all_fruit_data %<>%
 		left_join(flowering_dates) %>%
-		left_join(select(seed_counts, FruitUUID:SeedComments), by = "FruitUUID")%>%
-		select(VineUUID:FloweringColour, FloweringDate, SubtendingLeafSize:SoluableSolidsContent, 
+		left_join(select(seed_counts, FruitUUID:SeedComments), by = "FruitUUID") %>%
+		mutate(DryWeight = DryMatter / (100 * FreshWeight)) %>%
+		select(VineUUID:FloweringColour, FloweringDate, SubtendingLeafSize:DryMatter, DryWeight,
+			   FreshWeightSlice:SoluableSolidsContent, 
 			   SubSampleSeedWeight:SeedComments, FASTLabComments, Comments)
 	
 }

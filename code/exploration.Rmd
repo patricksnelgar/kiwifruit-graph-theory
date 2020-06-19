@@ -13,8 +13,6 @@ library(tidygraph)
 library(tidyverse)
 library(ggraph)
 library(magrittr)
-#library(igraph)
-#library(gganimate)
 library(htmlwidgets)
 library(plotly)
 library(ggplot2)
@@ -63,7 +61,7 @@ flowering_dates <- read_csv("input/flowering_dates.csv") %>%
 ```
 
 ```{r vine_data_import, echo = FALSE}
-redo <- FALSE
+redo <- TRUE
 
 
 if(!file.exists(c("workspace/all_fruit_data.csv", 
@@ -73,22 +71,24 @@ if(!file.exists(c("workspace/all_fruit_data.csv",
 	source("code/data_import/architecture_data_import_and_merge.R")
 	source("code/data_import/shoot_data_import_and_merge.R")
 	source("code/data_import/fruit_data_import_and_merge.R")
+	
+	source("code/data_import/fruit_exclusions.R")
 
 	
-	write_csv(all_fruit_data, "workspace/all_fruit_data.csv")
-	write_csv(all_arch_data, "workspace/all_arch_data.csv")
-	write_csv(all_shoot_data, "workspace/all_shoot_data.csv")
+	write_csv(all_fruit_data, "workspace/all_fruit_data.csv", na = "")
+	write_csv(all_arch_data, "workspace/all_arch_data.csv", na = "")
+	write_csv(all_shoot_data, "workspace/all_shoot_data.csv", na = "")
 	
 } else {
 	# Need to set column types for all as only the first 1000 rows are used for
 	# imputing types which doesnt work for scarce columns (seed counts etc.)
-	all_fruit_data <- read_csv("workspace/all_fruit_data.csv", col_types = "dddccccddcDcdddddddddddddddccc")
+	all_fruit_data <- read_csv("workspace/all_fruit_data.csv", col_types = "dddccccddcDcddddddddddddddddccc")
 	all_arch_data <- read_csv("workspace/all_arch_data.csv", col_types = "dddccccdddddddddcc")
 	all_shoot_data <- read_csv("workspace/all_shoot_data.csv", col_types = "dcdddccccdc")
 }
 
 
-# Factors that allow for fixing vine positions in grid plots
+	# Factors that allow for fixing vine positions in grid plots
 	all_arch_data %<>%
 		mutate(VineTreatmentOrder = factor(VineUUID, levels = c(1, 2, 3, 4, 6, 5, 9, 8, 7)),
 			   VineTreatment = ifelse(VineUUID %in% c(1, 4, 9), "1 Conv", 
@@ -99,8 +99,11 @@ if(!file.exists(c("workspace/all_fruit_data.csv",
 			   				 	   ifelse(VineUUID %in% c(7:9), 3, NA)))) 
 	
 	
+	# Pull in x&y coords 
 	all_fruit_data %<>%
 		left_join(select(all_arch_data, ShootUUID, SegmentEndX, SegmentEndY))
+
+	
 	# Factors that allow for fixing vine positions in grid plots
 	# and 'binning' fruit metrics for visual display
 	all_fruit_data %<>%
@@ -147,12 +150,18 @@ pointYOffset <- function (central_ypoint, radius, point_pos){
 
 ```{r all_vines_plot, echo = FALSE}
 
-source("code/visualisation/all_vines_fruit_metrics.R")
+source("code/visualisation/fruit_metrics/all_vines_fruit_metrics.R")
 
 ```
 
 ```{r individual_vine_fruit_metrics, echo = FALSE}
 
-source("code/visualisation/individual_vine_fruit_metrics.R")
+source("code/visualisation/fruit_metrics/individual_vine_fruit_metrics.R")
+
+```
+
+```{r vine_architectures, echo = FALSE}
+
+source("code/visualisation/vine_architectures.R")
 
 ```
