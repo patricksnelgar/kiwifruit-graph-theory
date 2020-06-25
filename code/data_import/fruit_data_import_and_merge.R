@@ -50,7 +50,9 @@ if(length(all_arch_data) <= 1){
 							   TotalSeedWeight = 6,
 							   AverageSeedCount = 7,
 							   SeedComments = 8) %>%
-						mutate(FruitUUID = gsub("([1-9])([0-9]*)", "\\1-\\2", FruitUUID))
+						filter(!is.na(FruitUUID)) %>%
+						mutate(VineID = gsub("([1-9])(.*)", "\\1", FruitUUID),
+							   FruitUUID = paste(VineID, as.numeric(gsub("([1-9])([0-9]*)", "\\2", FruitUUID)), sep = "-"))
 	
 	all_fruit_data %<>%
 		left_join(flowering_dates) %>%
