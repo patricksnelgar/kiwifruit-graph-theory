@@ -22,7 +22,7 @@ all_arch_data %>%
 			ggtitle("Dry Matter by Vine") +
 			theme_base_graph() 
 
-ggsave("output/Vine 1 - 9 dry matter map.jpg", width = 20, height = 15)
+ggsave(here("output/Vine 1 - 9 dry matter map.jpg"), width = 20, height = 15)
 
 #### Dry matter (binned) by treatment ####
 
@@ -63,7 +63,7 @@ all_arch_data %>%
 			ggtitle("Dry Matter by Vine & treatment") +
 			theme_base_graph() 
 
-ggsave("output/Vine 1 - 9 dry matter by treatment map.jpg", width = 20, height = 15)
+ggsave(here("output/Vine 1 - 9 dry matter by treatment map.jpg"), width = 20, height = 15)
 
 #### Flower Timing by treatment ####
 
@@ -89,7 +89,7 @@ all_arch_data %>%
 		ggtitle("Flowering date by Vine & treatment") +
 		theme_base_graph()
 
-ggsave("output/Vine 1 - 9 flowering date by treatment map.jpg", width = 20, height = 15)
+ggsave(here("output/Vine 1 - 9 flowering date by treatment map.jpg"), width = 20, height = 15)
 
 #### Fresh weight (binned) by treatment ####
 
@@ -115,4 +115,4 @@ all_arch_data %>%
 		ggtitle("Fresh weight by Vine & treatment") +
 		theme_base_graph()
 
-ggsave("output/Vine 1 - 9 fresh weight by treatment map.jpg", width = 20, height = 15)
+ggsave(here("output/Vine 1 - 9 fresh weight by treatment map.jpg"), width = 20, height = 15)

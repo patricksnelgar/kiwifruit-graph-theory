@@ -1,7 +1,7 @@
 all_arch_data <- NA
 
 for(vine_id in 1:9){
-	temp_arch <- read_csv(paste0("input/architecture/kiwimac_data_vine", vine_id, ".csv")) %>%
+	temp_arch <- read_csv(here(paste0("input/architecture/kiwimac_data_vine", vine_id, ".csv"))) %>%
 					mutate(ShootUUID = ifelse(!is.na(to_shoot_id), paste(vine_id, to_shoot_id, sep = "-"), NA),
 						   CaneUUID = ifelse(!is.na(cane_id), paste(vine_id, cane_id, sep = "-"), NA),
 						   OriginUUID = ifelse(!is.na(to_origin_id), paste(vine_id, to_origin_id, sep = "-"), NA),
