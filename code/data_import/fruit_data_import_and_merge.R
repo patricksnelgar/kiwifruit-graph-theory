@@ -7,8 +7,9 @@ if(length(all_arch_data) <= 1){
 } else {
 	
 	for(vine_id in 1:9){
-		temp_fruit_data <- read_csv(paste0("input/fruit_data/fruit_data_vine", vine_id, ".csv")) %>%
-								mutate(ShootUUID = paste(vine_id, ShootID, sep = "-"))
+		temp_fruit_data <- 
+			read_csv(here(paste0("input/fruit_data/fruit_data_vine", vine_id, ".csv"))) %>%
+			mutate(ShootUUID = paste(vine_id, ShootID, sep = "-"))
 		
 		temp_arch <- all_arch_data %>%
 			filter(VineUUID == vine_id)
@@ -41,7 +42,7 @@ if(length(all_arch_data) <= 1){
 	rm(temp_fruit_data)
 	rm(temp_arch)
 	
-	seed_counts <- read_csv("input/fruit_data/seed_counts.csv") %>%
+	seed_counts <- read_csv(here("input/fruit_data/seed_counts.csv")) %>%
 						rename(SampleID = 1,
 							   TrayPosition = 2,
 							   TrayID = 3,
