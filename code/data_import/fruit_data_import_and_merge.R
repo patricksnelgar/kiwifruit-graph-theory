@@ -1,3 +1,5 @@
+# This file imports and combines the fruit information for all vines
+# in addition to extra info from the architecture dataset, seed counts and flowering dates.
 
 all_fruit_data <- NA
 
@@ -9,7 +11,7 @@ if(length(all_arch_data) <= 1){
 	for(vine_id in 1:9){
 		temp_fruit_data <- 
 			read_csv(here(paste0("input/fruit_data/fruit_data_vine", vine_id, ".csv"))) %>%
-			mutate(ShootUUID = paste(vine_id, ShootID, sep = "-"))
+			mutate(ShootUUID = paste(vine_id, ShootID, sep = "-S"))
 		
 		temp_arch <- all_arch_data %>%
 			filter(VineUUID == vine_id)
@@ -19,7 +21,7 @@ if(length(all_arch_data) <= 1){
 		# Lots of renaming... 
 		temp_fruit_data %<>%
 			left_join(select(temp_arch, ShootUUID, CaneUUID, ParentOriginID, Quadrant)) %>%
-			mutate(FruitID = paste(vine_id, as.numeric(gsub("([1-9])([0-9]*)", "\\2", FruitID)), sep = "-")) %>%
+			mutate(FruitID = paste(vine_id, as.numeric(gsub("([1-9])([0-9]*)", "\\2", FruitID)), sep = "-F")) %>%
 			rename(VineUUID = Vine, TrayID = Tray, TrayPosition = TrayFruit,
 				   FruitUUID = FruitID, FruitPositionUpShoot = FruitPos,
 				   FloweringColour = Flowering, SubtendingLeafSize = `Sub-T Leaf`,
@@ -39,9 +41,12 @@ if(length(all_arch_data) <= 1){
 			all_fruit_data %<>% bind_rows(temp_fruit_data)
 	}
 	
+	# cleanup of variables
 	rm(temp_fruit_data)
 	rm(temp_arch)
 	
+	# data from FAST lab
+	# only a subsample of fruit got analysed so a lot of blank rows
 	seed_counts <- read_csv(here("input/fruit_data/seed_counts.csv")) %>%
 						rename(SampleID = 1,
 							   TrayPosition = 2,
@@ -53,8 +58,10 @@ if(length(all_arch_data) <= 1){
 							   SeedComments = 8) %>%
 						filter(!is.na(FruitUUID)) %>%
 						mutate(VineID = gsub("([1-9])(.*)", "\\1", FruitUUID),
-							   FruitUUID = paste(VineID, as.numeric(gsub("([1-9])([0-9]*)", "\\2", FruitUUID)), sep = "-"))
+							   FruitUUID = paste(VineID, as.numeric(gsub("([1-9])([0-9]*)", "\\2", FruitUUID)), sep = "-F"))
 	
+	# Join flowering and seed count data to fruit data set
+	# drop unwanted columns and reorder
 	all_fruit_data %<>%
 		left_join(flowering_dates) %>%
 		left_join(select(seed_counts, FruitUUID:SeedComments), by = "FruitUUID") %>%

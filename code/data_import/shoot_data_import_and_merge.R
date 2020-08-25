@@ -1,4 +1,26 @@
+# This file handles importing the shoot dataset
+
 all_shoot_data <- NA
+
+# shoot data is now in a single stacked sheet
+# just need to rename columns & make UUIDs
+all_shoot_data <- 
+	read_csv(here("input/all_shoots_stacked.csv")) %>%
+	mutate(ShootUUID = paste(Vine, Shoot, sep = "-S")) %>%
+	rename(VineUUID = 1, LeafLoss = 6,
+		   NumFruit = 7, ShootLength = 8,
+		   ShootType = 9, IsPruned = 11,
+		   HasRegrowth = 12, IsStrung = 13,
+		   LengthIsEstimate = 14, ShootDiameter = 15,
+		   Comments = 16) %>%
+	mutate(IsPruned = gsub("y", TRUE, IsPruned),
+		   HasRegrowth = gsub("y", TRUE, HasRegrowth),
+		   IsStrung = gsub("y", TRUE, IsStrung),
+		   LengthIsEstimate = gsub("y", TRUE, LengthIsEstimate)) %>%
+	select(VineUUID, ShootUUID, LeafLoss, NumFruit,
+		   ShootLength, ShootType, IsPruned, 
+		   HasRegrowth, IsStrung, LengthIsEstimate, ShootDiameter, Comments)
+
 
 # for(vine_id in 1:9){
 # 	# using numbers to reference column locations as most have spaces in the original
@@ -20,25 +42,6 @@ all_shoot_data <- NA
 # 	
 # }
 
-all_shoot_data <- 
-	read_csv(here("input/all_shoots_stacked.csv")) %>%
-	mutate(ShootUUID = paste(Vine, Shoot, sep = "-")) %>%
-	rename(VineUUID = 1, LeafLoss = 6,
-		   NumFruit = 7, ShootLength = 8,
-		   ShootType = 9, IsPruned = 11,
-		   HasRegrowth = 12, IsStrung = 13,
-		   LengthIsEstimate = 14, ShootDiameter = 15,
-		   Comments = 16) %>%
-	mutate(IsPruned = gsub("y", TRUE, IsPruned),
-		   HasRegrowth = gsub("y", TRUE, HasRegrowth),
-		   IsStrung = gsub("y", TRUE, IsStrung),
-		   LengthIsEstimate = gsub("y", TRUE, LengthIsEstimate)) %>%
-	select(VineUUID, ShootUUID, LeafLoss, NumFruit,
-		   ShootLength, ShootType, IsPruned, 
-		   HasRegrowth, IsStrung, LengthIsEstimate, ShootDiameter, Comments)
-	
-
-
-rm(temp_shoots)
+# rm(temp_shoots)
 
 

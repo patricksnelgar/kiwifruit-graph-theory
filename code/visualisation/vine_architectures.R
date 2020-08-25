@@ -1,11 +1,12 @@
-
+# this file plots the network diagrams for each vine.
 
 for(vine_id in 1:9) {
+	
 	temp_arch <- 
 		all_arch_data %>%
 		filter(VineUUID == vine_id)
 	
-
+	# need a list of all the possible node IDs
 	vine_nodes <- 
 		temp_arch %$%
 		c(ParentNodeID, NodeID) %>%
@@ -14,6 +15,7 @@ for(vine_id in 1:9) {
 		rename(label = 1) %>%
 		arrange(label)
 	
+	# add architecture information for each node
 	vine_nodes %<>%
 		left_join(select(temp_arch, NodeID:ParentOriginID), by = c("label" = "NodeID")) %>%
 		mutate(NodeType = factor(ifelse(!is.na(ShootUUID), "Shoot", 
@@ -21,6 +23,8 @@ for(vine_id in 1:9) {
 								 levels = c("Shoot", "Origin", "Junction")),
 			   NodeLabel = ifelse(!is.na(ShootUUID), ShootUUID, OriginUUID))
 	
+	# join previous node dataset and
+	# edge dataset into a ggraph object then plot
 	temp_arch %>%
 		rename(from = ParentNodeID, to = NodeID) %>%	
 		tbl_graph(vine_nodes, .) %>%

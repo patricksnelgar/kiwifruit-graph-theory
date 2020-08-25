@@ -11,7 +11,7 @@
 
 <meta name="author" content="Patrick Snelgar" />
 
-<meta name="date" content="2020-08-04" />
+<meta name="date" content="2020-08-26" />
 
 <title>kiwifruit graph theory</title>
 
@@ -365,35 +365,378 @@ summary {
 
 <h1 class="title toc-ignore">kiwifruit graph theory</h1>
 <h4 class="author">Patrick Snelgar</h4>
-<h4 class="date">04 Aug 2020</h4>
+<h4 class="date">26 Aug 2020</h4>
 
 </div>
 
 
 <pre><code>## Parsed with column specification:
 ## cols(
-##   quadrant = col_double(),
-##   x_offset = col_double(),
-##   y_offset = col_double(),
-##   x_multiplier = col_double(),
-##   y_multiplier = col_double()
-## )</code></pre>
-<pre><code>## Parsed with column specification:
-## cols(
 ##   FloweringColour = col_character(),
 ##   FloweringDate = col_character()
 ## )</code></pre>
-<pre><code>## Warning: Unnamed `col_types` should have the same length as `col_names`. Using
-## smaller of the two.</code></pre>
-<pre><code>## Warning: 3425 parsing failures.
-## row col   expected     actual                                                                                      file
-##   1  -- 11 columns 12 columns &#39;C:/Users/Patrick/Documents/Coding/R/kiwifruit-graph-theory/workspace/all_shoot_data.csv&#39;
-##   2  -- 11 columns 12 columns &#39;C:/Users/Patrick/Documents/Coding/R/kiwifruit-graph-theory/workspace/all_shoot_data.csv&#39;
-##   3  -- 11 columns 12 columns &#39;C:/Users/Patrick/Documents/Coding/R/kiwifruit-graph-theory/workspace/all_shoot_data.csv&#39;
-##   4  -- 11 columns 12 columns &#39;C:/Users/Patrick/Documents/Coding/R/kiwifruit-graph-theory/workspace/all_shoot_data.csv&#39;
-##   5  -- 11 columns 12 columns &#39;C:/Users/Patrick/Documents/Coding/R/kiwifruit-graph-theory/workspace/all_shoot_data.csv&#39;
-## ... ... .......... .......... .........................................................................................
-## See problems(...) for more details.</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   vine_id = col_double(),
+##   from = col_double(),
+##   to = col_double(),
+##   length = col_double(),
+##   to_shoot_id = col_double(),
+##   spurs = col_logical(),
+##   cane_id = col_double(),
+##   x = col_double(),
+##   y = col_double(),
+##   quadrant = col_double(),
+##   diameter = col_double(),
+##   to_origin_id = col_character(),
+##   orientation = col_character(),
+##   base_origin_id = col_double(),
+##   notes = col_character()
+## )</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   vine_id = col_double(),
+##   from = col_double(),
+##   to = col_double(),
+##   length = col_double(),
+##   to_shoot_id = col_double(),
+##   spurs = col_character(),
+##   cane_id = col_double(),
+##   x = col_double(),
+##   y = col_double(),
+##   quadrant = col_double(),
+##   diameter = col_double(),
+##   to_origin_id = col_character(),
+##   orientation = col_character(),
+##   base_origin_id = col_double(),
+##   notes = col_character()
+## )
+## Parsed with column specification:
+## cols(
+##   vine_id = col_double(),
+##   from = col_double(),
+##   to = col_double(),
+##   length = col_double(),
+##   to_shoot_id = col_double(),
+##   spurs = col_character(),
+##   cane_id = col_double(),
+##   x = col_double(),
+##   y = col_double(),
+##   quadrant = col_double(),
+##   diameter = col_double(),
+##   to_origin_id = col_character(),
+##   orientation = col_character(),
+##   base_origin_id = col_double(),
+##   notes = col_character()
+## )
+## Parsed with column specification:
+## cols(
+##   vine_id = col_double(),
+##   from = col_double(),
+##   to = col_double(),
+##   length = col_double(),
+##   to_shoot_id = col_double(),
+##   spurs = col_character(),
+##   cane_id = col_double(),
+##   x = col_double(),
+##   y = col_double(),
+##   quadrant = col_double(),
+##   diameter = col_double(),
+##   to_origin_id = col_character(),
+##   orientation = col_character(),
+##   base_origin_id = col_double(),
+##   notes = col_character()
+## )
+## Parsed with column specification:
+## cols(
+##   vine_id = col_double(),
+##   from = col_double(),
+##   to = col_double(),
+##   length = col_double(),
+##   to_shoot_id = col_double(),
+##   spurs = col_character(),
+##   cane_id = col_double(),
+##   x = col_double(),
+##   y = col_double(),
+##   quadrant = col_double(),
+##   diameter = col_double(),
+##   to_origin_id = col_character(),
+##   orientation = col_character(),
+##   base_origin_id = col_double(),
+##   notes = col_character()
+## )
+## Parsed with column specification:
+## cols(
+##   vine_id = col_double(),
+##   from = col_double(),
+##   to = col_double(),
+##   length = col_double(),
+##   to_shoot_id = col_double(),
+##   spurs = col_character(),
+##   cane_id = col_double(),
+##   x = col_double(),
+##   y = col_double(),
+##   quadrant = col_double(),
+##   diameter = col_double(),
+##   to_origin_id = col_character(),
+##   orientation = col_character(),
+##   base_origin_id = col_double(),
+##   notes = col_character()
+## )
+## Parsed with column specification:
+## cols(
+##   vine_id = col_double(),
+##   from = col_double(),
+##   to = col_double(),
+##   length = col_double(),
+##   to_shoot_id = col_double(),
+##   spurs = col_character(),
+##   cane_id = col_double(),
+##   x = col_double(),
+##   y = col_double(),
+##   quadrant = col_double(),
+##   diameter = col_double(),
+##   to_origin_id = col_character(),
+##   orientation = col_character(),
+##   base_origin_id = col_double(),
+##   notes = col_character()
+## )
+## Parsed with column specification:
+## cols(
+##   vine_id = col_double(),
+##   from = col_double(),
+##   to = col_double(),
+##   length = col_double(),
+##   to_shoot_id = col_double(),
+##   spurs = col_character(),
+##   cane_id = col_double(),
+##   x = col_double(),
+##   y = col_double(),
+##   quadrant = col_double(),
+##   diameter = col_double(),
+##   to_origin_id = col_character(),
+##   orientation = col_character(),
+##   base_origin_id = col_double(),
+##   notes = col_character()
+## )
+## Parsed with column specification:
+## cols(
+##   vine_id = col_double(),
+##   from = col_double(),
+##   to = col_double(),
+##   length = col_double(),
+##   to_shoot_id = col_double(),
+##   spurs = col_character(),
+##   cane_id = col_double(),
+##   x = col_double(),
+##   y = col_double(),
+##   quadrant = col_double(),
+##   diameter = col_double(),
+##   to_origin_id = col_character(),
+##   orientation = col_character(),
+##   base_origin_id = col_double(),
+##   notes = col_character()
+## )</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   Vine = col_double(),
+##   Treatment = col_character(),
+##   Shoot = col_double(),
+##   VineShoot = col_double(),
+##   Origin = col_double(),
+##   `Leaf loss` = col_double(),
+##   `No. Fruit` = col_double(),
+##   `Shoot Length` = col_double(),
+##   `Shoot type` = col_character(),
+##   ShootCategory = col_character(),
+##   `Pruned?` = col_character(),
+##   `Regrowth?` = col_character(),
+##   `Strung?` = col_character(),
+##   `estimate length?` = col_character(),
+##   `Shoot diameter` = col_double(),
+##   notes = col_character()
+## )</code></pre>
+<pre><code>## Warning: 1 parsing failure.
+##  row       col expected actual                                                                                      file
+## 1822 Leaf loss a double      x &#39;C:/Users/Patrick/Documents/Coding/R/kiwifruit-graph-theory/input/all_shoots_stacked.csv&#39;</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Flowering = col_character(),
+##   `Sub-T Leaf` = col_character(),
+##   Notes = col_character(),
+##   `Seed count` = col_character(),
+##   FAST_Date = col_character(),
+##   OrchName = col_character(),
+##   ExptName = col_character(),
+##   Cultivar = col_character(),
+##   TmtNAME = col_character(),
+##   Location = col_logical(),
+##   DishID = col_character(),
+##   SSC2 = col_logical(),
+##   Comments = col_character()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre><code>## Joining, by = &quot;ShootUUID&quot;</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Flowering = col_character(),
+##   `Sub-T Leaf` = col_character(),
+##   Notes = col_character(),
+##   `Seed count` = col_character(),
+##   FAST_Date = col_character(),
+##   OrchName = col_character(),
+##   ExptName = col_character(),
+##   Cultivar = col_character(),
+##   TmtNAME = col_character(),
+##   Location = col_logical(),
+##   DishID = col_character(),
+##   SSC2 = col_logical(),
+##   Comments = col_character()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre><code>## Joining, by = &quot;ShootUUID&quot;</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Flowering = col_character(),
+##   `Sub-T Leaf` = col_character(),
+##   Notes = col_character(),
+##   `Seed count` = col_character(),
+##   FAST_Date = col_character(),
+##   OrchName = col_character(),
+##   ExptName = col_character(),
+##   Cultivar = col_character(),
+##   TmtNAME = col_character(),
+##   Location = col_logical(),
+##   DishID = col_character(),
+##   SSC2 = col_logical(),
+##   Comments = col_character()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre><code>## Joining, by = &quot;ShootUUID&quot;</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Flowering = col_character(),
+##   `Sub-T Leaf` = col_character(),
+##   Notes = col_character(),
+##   `Seed count` = col_character(),
+##   FAST_Date = col_character(),
+##   OrchName = col_character(),
+##   ExptName = col_character(),
+##   Cultivar = col_character(),
+##   TmtNAME = col_character(),
+##   Location = col_logical(),
+##   DishID = col_character(),
+##   SSC2 = col_logical(),
+##   Comments = col_character()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre><code>## Joining, by = &quot;ShootUUID&quot;</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Flowering = col_character(),
+##   `Sub-T Leaf` = col_character(),
+##   Notes = col_character(),
+##   `Seed count` = col_character(),
+##   FAST_Date = col_character(),
+##   OrchName = col_character(),
+##   ExptName = col_character(),
+##   Cultivar = col_character(),
+##   TmtNAME = col_character(),
+##   Location = col_logical(),
+##   DishID = col_character(),
+##   SSC2 = col_logical(),
+##   Comments = col_character()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre><code>## Joining, by = &quot;ShootUUID&quot;</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Flowering = col_character(),
+##   `Sub-T Leaf` = col_character(),
+##   Notes = col_character(),
+##   `Seed count` = col_character(),
+##   FAST_Date = col_character(),
+##   OrchName = col_character(),
+##   ExptName = col_character(),
+##   Cultivar = col_character(),
+##   TmtNAME = col_character(),
+##   Location = col_logical(),
+##   DishID = col_character(),
+##   SSC2 = col_logical(),
+##   Comments = col_character()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre><code>## Joining, by = &quot;ShootUUID&quot;</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Flowering = col_character(),
+##   `Sub-T Leaf` = col_logical(),
+##   Notes = col_character(),
+##   `Seed count` = col_character(),
+##   FAST_Date = col_character(),
+##   OrchName = col_character(),
+##   ExptName = col_character(),
+##   Cultivar = col_character(),
+##   TmtNAME = col_character(),
+##   Location = col_logical(),
+##   DishID = col_character(),
+##   SSC2 = col_logical(),
+##   Comments = col_character()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre><code>## Joining, by = &quot;ShootUUID&quot;</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Flowering = col_character(),
+##   `Sub-T Leaf` = col_logical(),
+##   Notes = col_character(),
+##   `Seed count` = col_character(),
+##   FAST_Date = col_character(),
+##   OrchName = col_character(),
+##   ExptName = col_character(),
+##   Cultivar = col_character(),
+##   TmtNAME = col_character(),
+##   Location = col_logical(),
+##   DishID = col_character(),
+##   SSC2 = col_logical(),
+##   Comments = col_character()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre><code>## Joining, by = &quot;ShootUUID&quot;</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Flowering = col_character(),
+##   `Sub-T Leaf` = col_logical(),
+##   Notes = col_character(),
+##   `Seed count` = col_character(),
+##   FAST_Date = col_character(),
+##   OrchName = col_character(),
+##   ExptName = col_character(),
+##   Cultivar = col_character(),
+##   TmtNAME = col_character(),
+##   Location = col_logical(),
+##   DishID = col_character(),
+##   SSC2 = col_logical(),
+##   Comments = col_character()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre><code>## Joining, by = &quot;ShootUUID&quot;</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   Comments = col_character()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre><code>## Joining, by = &quot;FloweringColour&quot;</code></pre>
 <pre><code>## Joining, by = &quot;ShootUUID&quot;</code></pre>
 <pre><code>## `summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <pre><code>## Warning: Removed 1 rows containing missing values (geom_point).</code></pre>
