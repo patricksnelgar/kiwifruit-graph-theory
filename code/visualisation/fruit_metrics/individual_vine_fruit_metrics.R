@@ -1,3 +1,6 @@
+# Generate graphs for each metric for each vine,
+# combine the plots and output.
+
 
 for(vine_id in 1:9){
 	
