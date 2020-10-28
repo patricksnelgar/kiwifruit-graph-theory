@@ -21,7 +21,31 @@ all_shoot_data <-
 		   ShootLength, ShootType, IsPruned, 
 		   HasRegrowth, IsStrung, LengthIsEstimate, ShootDiameter, Comments)
 
+#Shoot types by length only
+all_shoot_data <- within(all_shoot_data, ShootTypeVeryCoarse <- 
+					ifelse(ShootLength<35, "short",	
+						   ifelse(ShootLength>=180, "long", "medium")))
 
+
+#Shoot types by coarse category
+all_shoot_data %<>%
+	mutate(ShootTypeCoarse = ifelse((ShootLength<35 & is.na(IsPruned)), "short", 
+		ifelse(ShootLength>=180 | (IsPruned=="TRUE" & ShootDiameter>=9), "long", 
+				ifelse((ShootLength>=35 & (ShootLength<180 | ShootDiameter<9)), "medium", "ERROR"))))
+
+
+#Shoot types by refined category, incorporating length, diameter, and pruning status
+all_shoot_data <- within(all_shoot_data, ShootTypeRefined <- 
+	ifelse((ShootLength<=1 & is.na(IsPruned)),"stub", 
+		ifelse((ShootLength>1 & ShootLength<=10 & is.na(IsPruned)),"very short", 
+			ifelse((ShootLength<=35 & ShootLength>5 & is.na(IsPruned)),"short", 
+				ifelse((ShootLength>35 & ShootLength<=180 & is.na(IsPruned)),"medium",
+					ifelse((ShootDiameter<9 & IsPruned=="TRUE"),"medium pruned", "ERROR"))))))
+						ifelse((ShootLength>180 & ShootLength<500 & is.na(IsPruned)),"long",
+							ifelse((ShootDiameter>=9 & ShootLength>=40 & IsPruned=="TRUE"), "long pruned",
+								ifelse((ShootDiameter>=9 & ShootLength<40 & IsPruned=="TRUE"),"long stubbed", 
+									ifelse(ShootLength>=500,"very long","ERROR"))))))))))						
+						 
 # for(vine_id in 1:9){
 # 	# using numbers to reference column locations as most have spaces in the original
 # 	temp_shoots <- read_csv(paste0("input/shoot_data/shoot_data_vine", vine_id ,".csv")) %>%
