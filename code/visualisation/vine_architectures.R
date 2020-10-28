@@ -18,10 +18,10 @@ for(vine_id in 1:9) {
 	# add architecture information for each node
 	vine_nodes %<>%
 		left_join(select(temp_arch, NodeID:ParentOriginID), by = c("label" = "NodeID")) %>%
-		mutate(NodeType = factor(ifelse(!is.na(ShootUUID), "Shoot", 
-								 ifelse(!is.na(OriginUUID), "Origin", "Junction")),
+		mutate(NodeType = factor(if_else(!is.na(ShootUUID), "Shoot", 
+								 if_else(!is.na(OriginUUID), "Origin", "Junction")),
 								 levels = c("Shoot", "Origin", "Junction")),
-			   NodeLabel = ifelse(!is.na(ShootUUID), ShootUUID, OriginUUID))
+			   NodeLabel = if_else(!is.na(ShootUUID), ShootUUID, OriginUUID))
 	
 	# join previous node dataset and
 	# edge dataset into a ggraph object then plot

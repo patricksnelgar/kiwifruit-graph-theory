@@ -5,10 +5,10 @@ all_arch_data <- NA
 
 for(vine_id in 1:9){
 	temp_arch <- read_csv(here(paste0("input/architecture/kiwimac_data_vine", vine_id, ".csv"))) %>%
-					mutate(ShootUUID = ifelse(!is.na(to_shoot_id), paste(vine_id, to_shoot_id, sep = "-S"), NA),
-						   CaneUUID = ifelse(!is.na(cane_id), paste(vine_id, cane_id, sep = "-"), NA),
-						   OriginUUID = ifelse(!is.na(to_origin_id), paste(vine_id, to_origin_id, sep = "-O"), NA),
-						   ParentOriginID = ifelse(!is.na(base_origin_id), paste(vine_id, base_origin_id, sep = "-O"), NA)) %>%
+					mutate(ShootUUID = if_else(!is.na(to_shoot_id), paste(vine_id, to_shoot_id, sep = "-S"), NA),
+						   CaneUUID = if_else(!is.na(cane_id), paste(vine_id, cane_id, sep = "-"), NA),
+						   OriginUUID = if_else(!is.na(to_origin_id), paste(vine_id, to_origin_id, sep = "-O"), NA),
+						   ParentOriginID = if_else(!is.na(base_origin_id), paste(vine_id, base_origin_id, sep = "-O"), NA)) %>%
 					rename(VineUUID = 1, ParentNodeID = 2, NodeID = 3, SegmentLength = 4, 
 						   DistanceFromQuadrantX = 8, DistanceFromQuadrantY = 9,
 						   Quadrant = 10, SegmentDiameter = 11, SegmentOrientation = 13, Comments = 15) %>%

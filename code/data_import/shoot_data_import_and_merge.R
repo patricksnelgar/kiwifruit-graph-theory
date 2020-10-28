@@ -1,9 +1,15 @@
 # This file handles importing the shoot dataset
-
+# make sure there is no existing data
 all_shoot_data <- NA
 
-# shoot data is now in a single stacked sheet
-# just need to rename columns & make UUIDs
+#' shoot data is now in a single stacked sheet
+#' just need to rename columns & make UUIDs
+#' 
+#' adjusted y/n columns to be of type 'logical' to  avoid the issue of NA's in later condition checks
+#' example of problem
+#' if_else(c(TRUE, TRUE, NA, NA, TRUE), 1, 0)
+#' vs
+#' if_else(c(TRUE, TRUE, FALSE, FALSE, TRUE), 1, 0)
 all_shoot_data <- 
 	read_csv(here("input/all_shoots_stacked.csv")) %>%
 	mutate(ShootUUID = paste(Vine, Shoot, sep = "-S")) %>%
@@ -13,38 +19,55 @@ all_shoot_data <-
 		   HasRegrowth = 12, IsStrung = 13,
 		   LengthIsEstimate = 14, ShootDiameter = 15,
 		   Comments = 16) %>%
-	mutate(IsPruned = gsub("y", TRUE, IsPruned),
-		   HasRegrowth = gsub("y", TRUE, HasRegrowth),
-		   IsStrung = gsub("y", TRUE, IsStrung),
-		   LengthIsEstimate = gsub("y", TRUE, LengthIsEstimate)) %>%
+	mutate(IsPruned = if_else(IsPruned %in% "y", TRUE, FALSE),
+		   HasRegrowth = if_else(HasRegrowth %in% "y", TRUE, FALSE),
+		   IsStrung = if_else(IsStrung %in% "y", TRUE, FALSE),
+		   LengthIsEstimate = if_else(LengthIsEstimate %in% "y", TRUE, FALSE)) %>%
 	select(VineUUID, ShootUUID, LeafLoss, NumFruit,
 		   ShootLength, ShootType, IsPruned, 
 		   HasRegrowth, IsStrung, LengthIsEstimate, ShootDiameter, Comments)
 
 #Shoot types by length only
 all_shoot_data <- within(all_shoot_data, ShootTypeVeryCoarse <- 
-					ifelse(ShootLength<35, "short",	
-						   ifelse(ShootLength>=180, "long", "medium")))
+					if_else(ShootLength<35, "short",	
+						   if_else(ShootLength>=180, "long", "medium")))
 
 
 #Shoot types by coarse category
+#' Changed all if_else to be if_else for efficiency and preservation of types:
+#' https://community.rstudio.com/t/case-when-why-not/2685/2
+#' 
+#' There is a hole in the logic test with this: 
+#' all_shoot_data %>% filter(!((ShootLength < 35 & !IsPruned) | 
+#'                             (ShootLength >= 180 | (IsPruned & ShootDiameter >= 9)) | 
+#'                             (ShootLength >=35 & (ShootLength < 180 |  ShootDiameter < 9))))
+#'                             
+#' has the same logical conditions as the 'Coarse' categorisation, but negated to find all those that DONT match,
+#' returns 111 rows.
+#' 
+#' uncategorised shoots are all:
+#'    <35 in length
+#'    pruned
+#'    < 9 in diameter
 all_shoot_data %<>%
-	mutate(ShootTypeCoarse = ifelse((ShootLength<35 & is.na(IsPruned)), "short", 
-		ifelse(ShootLength>=180 | (IsPruned=="TRUE" & ShootDiameter>=9), "long", 
-				ifelse((ShootLength>=35 & (ShootLength<180 | ShootDiameter<9)), "medium", "ERROR"))))
+	mutate(ShootTypeCoarse = 
+		   	if_else((ShootLength<35 & !IsPruned), "short",
+		   		if_else((ShootLength>=35 & (ShootLength<180 | ShootDiameter<9)), "medium",
+					if_else((ShootLength>=180 | (IsPruned & ShootDiameter>=9)), "long","ERROR"))))
 
 
 #Shoot types by refined category, incorporating length, diameter, and pruning status
+#' Switching the logical columns to be just that, seems to have fixed the filtering issue here
 all_shoot_data <- within(all_shoot_data, ShootTypeRefined <- 
-	ifelse((ShootLength<=1 & is.na(IsPruned)),"stub", 
-		ifelse((ShootLength>1 & ShootLength<=10 & is.na(IsPruned)),"very short", 
-			ifelse((ShootLength<=35 & ShootLength>5 & is.na(IsPruned)),"short", 
-				ifelse((ShootLength>35 & ShootLength<=180 & is.na(IsPruned)),"medium",
-					ifelse((ShootDiameter<9 & IsPruned=="TRUE"),"medium pruned", "ERROR"))))))
-						ifelse((ShootLength>180 & ShootLength<500 & is.na(IsPruned)),"long",
-							ifelse((ShootDiameter>=9 & ShootLength>=40 & IsPruned=="TRUE"), "long pruned",
-								ifelse((ShootDiameter>=9 & ShootLength<40 & IsPruned=="TRUE"),"long stubbed", 
-									ifelse(ShootLength>=500,"very long","ERROR"))))))))))						
+	if_else((ShootLength<=1 & !IsPruned),"stub", 
+		if_else((ShootLength>1 & ShootLength<=10 & !IsPruned),"very short", 
+			if_else((ShootLength<=35 & ShootLength>5 & !IsPruned),"short", 
+				if_else((ShootLength>35 & ShootLength<=180 & !IsPruned),"medium",
+					if_else((ShootDiameter<9 & IsPruned),"medium pruned",
+						if_else((ShootLength>180 & ShootLength<500 & !IsPruned),"long",
+							if_else((ShootDiameter>=9 & ShootLength>=40 & IsPruned), "long pruned",
+								if_else((ShootDiameter>=9 & ShootLength<40 & IsPruned),"long stubbed", 
+									if_else(ShootLength>=500,"very long","ERROR"))))))))))						
 						 
 # for(vine_id in 1:9){
 # 	# using numbers to reference column locations as most have spaces in the original
