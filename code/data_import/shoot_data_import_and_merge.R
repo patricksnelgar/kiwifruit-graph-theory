@@ -27,13 +27,13 @@ all_shoot_data <-
 		   ShootLength, ShootType, IsPruned, 
 		   HasRegrowth, IsStrung, LengthIsEstimate, ShootDiameter, Comments)
 
-#Shoot types by length only
-all_shoot_data <- within(all_shoot_data, ShootTypeVeryCoarse <- 
-					if_else(ShootLength<35, "short",	
-						   if_else(ShootLength>=180, "long", "medium")))
+#  Shoot types by length only
+#'all_shoot_data <- within(all_shoot_data, ShootTypeVeryCoarse <- 
+#'					if_else(ShootLength<35, "short",	
+#'						   if_else(ShootLength>=180, "long", "medium")))
 
 
-#Shoot types by coarse category
+#   Shoot types by coarse category
 #' Changed all if_else to be if_else for efficiency and preservation of types:
 #' https://community.rstudio.com/t/case-when-why-not/2685/2
 #' 
@@ -49,26 +49,49 @@ all_shoot_data <- within(all_shoot_data, ShootTypeVeryCoarse <-
 #'    <35 in length
 #'    pruned
 #'    < 9 in diameter
-all_shoot_data %<>%
-	mutate(ShootTypeCoarse = 
-		   	if_else((ShootLength<35 & !IsPruned), "short",
-		   		if_else((ShootLength>=35 & (ShootLength<180 | ShootDiameter<9)), "medium",
-					if_else((ShootLength>=180 | (IsPruned & ShootDiameter>=9)), "long","ERROR"))))
+#'all_shoot_data %<>%
+#'	mutate(ShootTypeCoarse = 
+#'		   	if_else((ShootLength<35 & (!IsPruned | (IsPruned & ShootDiameter <7.5))), "short",
+#'		   	  ifelse(((ShootLength>=35 & ShootLength<180) | (ShootLength<35 & IsPruned & ShootDiameter>=7.5 & ShootDiameter<9)), "medium",
+#'				if_else((ShootLength>=180 | (IsPruned & ShootDiameter>=9)), "long","ERROR"))))
 
 
-#Shoot types by refined category, incorporating length, diameter, and pruning status
+#   Shoot types by refined category, incorporating length, diameter, and pruning status
 #' Switching the logical columns to be just that, seems to have fixed the filtering issue here
 all_shoot_data <- within(all_shoot_data, ShootTypeRefined <- 
 	if_else((ShootLength<=1 & !IsPruned),"stub", 
 		if_else((ShootLength>1 & ShootLength<=10 & !IsPruned),"very short", 
 			if_else((ShootLength<=35 & ShootLength>5 & !IsPruned),"short", 
-				if_else((ShootLength>35 & ShootLength<=180 & !IsPruned),"medium",
+				if_else((ShootLength>35 & ShootLength<180 & !IsPruned),"medium",
 					if_else((ShootDiameter<9 & IsPruned),"medium pruned",
-						if_else((ShootLength>180 & ShootLength<500 & !IsPruned),"long",
+						if_else((ShootLength>=180 & ShootLength<500 & !IsPruned),"long",
 							if_else((ShootDiameter>=9 & ShootLength>=40 & IsPruned), "long pruned",
 								if_else((ShootDiameter>=9 & ShootLength<40 & IsPruned),"long stubbed", 
 									if_else(ShootLength>=500,"very long","ERROR"))))))))))						
 						 
+#   Assigning ShootTypeCoarse based on ShootTypeRefined categories
+
+all_shoot_data %<>%
+	mutate(ShootTypeCoarse = 
+		   	if_else((ShootTypeRefined=="stub" | ShootTypeRefined=="very short" | ShootTypeRefined=="short"), "short",
+		   			if_else((ShootTypeRefined=="medium"  | ShootTypeRefined=="medium pruned"), "medium",
+		   					if_else((ShootTypeRefined=="long" | ShootTypeRefined=="long pruned" | ShootTypeRefined=="long stubbed"  | ShootTypeRefined== "very long"), "long", "ERROR"))))
+
+
+# utilising coefficients from the power curve model to estimate leaf area
+
+
+coef(FitPwrVolume)
+FitPwrVolumeCoef <- coef(FitPwrVolume)
+
+all_shoot_data %<>%
+mutate(ShootVolume = (pi * ((ShootDiameter/20)^2)*ShootLength/3)) %>%
+
+mutate(ShootLeafArea = ShootVolume*FitPwrVolume)
+
+
+		  
+
 # for(vine_id in 1:9){
 # 	# using numbers to reference column locations as most have spaces in the original
 # 	temp_shoots <- read_csv(paste0("input/shoot_data/shoot_data_vine", vine_id ,".csv")) %>%
