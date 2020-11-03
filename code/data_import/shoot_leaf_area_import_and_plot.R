@@ -14,23 +14,26 @@ leaf_area_data <-
 
 # Calculate shoot volume (cm^2)from formula for a cone, changing diameter from mm to cm
 leaf_area_data %<>%
-mutate(ShootVolume = (pi * ((Diameter/20)^2)*Length/3))
+mutate(ShootVolume = (pi * ((ShootDiameter/20)^2)*ShootLength/3))
 
 	
 # Fit Power curve model to LeafArea vs Length data
-FitPwrLength <- nls(LeafArea ~ a*Length^b, data = leaf_area_data, start = list(a=1, b=1))
+FitPwrLength <- nls(LeafArea ~ a*ShootLength^b, data = leaf_area_data, start = list(a=1, b=1))
 FitPwrLength
 
 
-# Fit Power curve model to LeafArea vs Length data
+# Fit Power curve model to LeafArea vs conical Volume data
 FitPwrVolume <- nls(LeafArea ~ c*ShootVolume^d, data = leaf_area_data, start = list(c=1, d=1))
 FitPwrVolume
-
 coef(FitPwrVolume)
+
+
 # plot leaf area vs shoot length
 
-ggplot(leaf_area_data) + geom_point(aes(Length, LeafArea)) + geom_line(aes(Length, predict(FitPwrLength)), colour = "green")
+ggplot(leaf_area_data) + geom_point(aes(ShootLength, LeafArea)) + geom_line(aes(ShootLength, predict(FitPwrLength)), colour = "green")
 
 
 # plot leaf area vs shoot volume
 ggplot(leaf_area_data) + geom_point(aes(ShootVolume, LeafArea)) + geom_line(aes(ShootVolume, predict(FitPwrVolume)), colour = "green")
+
+

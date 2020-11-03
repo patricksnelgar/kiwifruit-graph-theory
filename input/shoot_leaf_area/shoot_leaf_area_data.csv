@@ -1,4 +1,4 @@
-ShootType,IsFruitStalks,TipStatus,IsIntact,Length,Diameter,LeafNumber,LeafArea,Notes
+ShootType,IsFruitStalks,TipStatus,IsIntact,ShootLength,ShootDiameter,LeafNumber,LeafArea,Notes
 s,n,t,y,2,5,2,164,
 m,y,t,y,66,8.5,12,1656,
 s,n,t,y,24,7.2,8,929,
