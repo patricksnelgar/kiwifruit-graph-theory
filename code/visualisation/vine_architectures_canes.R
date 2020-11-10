@@ -18,10 +18,10 @@ for(vine_id in 1:9) {
 	# add architecture information for each node
 	vine_nodes %<>%
 		left_join(select(temp_arch, NodeID:ParentOriginID), by = c("label" = "NodeID")) %>%
-		mutate(NodeType = factor(ifelse(!is.na(ShootUUID), "Shoot", 
-								 ifelse(!is.na(OriginUUID), "Origin", "Junction")),
+		mutate(NodeType = factor(if_else(!is.na(ShootUUID), "Shoot", 
+								 if_else(!is.na(OriginUUID), "Origin", "Junction")),
 								 levels = c("Shoot", "Origin", "Junction")),
-			   NodeLabel = ifelse(!is.na(ShootUUID), ShootUUID, OriginUUID))
+			   NodeLabel = if_else(!is.na(ShootUUID), ShootUUID, OriginUUID))
 	
 	# join previous node dataset and
 	# edge dataset into a ggraph object then plot
@@ -30,11 +30,11 @@ for(vine_id in 1:9) {
 		tbl_graph(vine_nodes, .) %>%
 			ggraph('tree') +
 				geom_edge_link(colour = "brown") +
-				geom_node_point(aes(colour = NodeType), size = 6) +
-				geom_node_text(aes(label = NodeLabel), repel = TRUE, size = 6) +
+				geom_node_point(aes(colour = NodeType), size = 6, alpha = 0.2) +
+				geom_node_text(aes(label = CaneUUID), size = 6) +
 				ggtitle(paste("Vine", vine_id, "tree architecture")) +
 				theme_graph()
 		
 	
-	ggsave(here(paste0("output/Vine ", vine_id, "/vine", vine_id, "_tree_architecture.jpg")), width = 30, height = 20)
+	ggsave(here(paste0("output/Vine ", vine_id, "/vine", vine_id, "_tree_architecture_canes.jpg")), width = 30, height = 20)
 }
