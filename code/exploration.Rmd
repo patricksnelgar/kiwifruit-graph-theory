@@ -69,7 +69,7 @@ flowering_dates <- read_csv(here("input/flowering_dates.csv")) %>%
 ```
 
 ```{r vine_data_import, echo = FALSE}
-redo <- FALSE
+redo <- TRUE
 
 
 if(!file.exists(
