@@ -71,3 +71,32 @@ if(length(all_arch_data) <= 1){
 			   SubSampleSeedWeight:SeedComments, FASTLabComments, Comments)
 	
 }
+
+
+# Cross referencing columns from the all_shoot_data data frame
+all_fruit_data %<>% 
+	left_join(select(all_shoot_data, ShootUUID, WoodType), by = "ShootUUID") %>%
+	left_join(select(all_shoot_data, ShootUUID, ShootTypeCoarse), by = "ShootUUID") %>%
+	left_join(select(all_shoot_data, ShootUUID, ShootTypeRefined), by = "ShootUUID") %>%
+	left_join(select(all_shoot_data, ShootUUID, ShootLeafArea), by = "ShootUUID") %>%
+	left_join(select(all_shoot_data, ShootUUID, NumFruit), by = "ShootUUID") %>%
+	left_join(select(all_shoot_data, ShootUUID, LeafLoss), by = "ShootUUID") 
+
+# Cross referencing columns from the all_arch_data data frame
+all_fruit_data %<>% 
+	left_join(select(all_arch_data, ShootUUID, SegmentStartX), by = "ShootUUID") %>%
+	left_join(select(all_arch_data, ShootUUID, SegmentStartY), by = "ShootUUID") %>%
+	mutate(AbsoluteLeaderCoord = abs(SegmentStartX)) %>%
+	mutate(AbsoluteCaneCoord = abs(SegmentStartY)) %>%
+	left_join(select(all_arch_data, ShootUUID, SegmentDiameter), by = "ShootUUID") %>%
+	left_join(select(all_arch_data, ShootUUID, QuadrantFromLeader), by = "ShootUUID") %>%
+	left_join(select(all_arch_data, ShootUUID, QuadrantFromTrunk), by = "ShootUUID") %>%
+	left_join(select(all_arch_data, ShootUUID, NorthSouth), by = "ShootUUID") %>%
+	left_join(select(all_arch_data, ShootUUID, EastWest), by = "ShootUUID")
+
+# Renaming column headers
+all_fruit_data <- all_fruit_data %>% rename(LeaderCoordinate = SegmentStartX) 
+all_fruit_data <- all_fruit_data %>% rename(CaneCoordinate = SegmentStartY) 
+all_fruit_data <- all_fruit_data %>% rename(FruitPerShoot = NumFruit) 
+all_fruit_data <- all_fruit_data %>% rename(ShootLeafLoss = LeafLoss) 
+all_fruit_data <- all_fruit_data %>% rename(SolubleSolidsContent = SoluableSolidsContent) 

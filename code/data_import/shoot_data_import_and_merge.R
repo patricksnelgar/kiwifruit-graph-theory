@@ -24,7 +24,7 @@ all_shoot_data <-
 		   IsStrung = if_else(IsStrung %in% "y", TRUE, FALSE),
 		   LengthIsEstimate = if_else(LengthIsEstimate %in% "y", TRUE, FALSE)) %>%
 	select(VineUUID, ShootUUID, LeafLoss, NumFruit,
-		   ShootLength, ShootType, IsPruned, 
+		   ShootLength, IsPruned, 
 		   HasRegrowth, IsStrung, LengthIsEstimate, ShootDiameter, Comments)
 
 #  Shoot types by length only
@@ -56,6 +56,14 @@ all_shoot_data <-
 #'				if_else((ShootLength>=180 | (IsPruned & ShootDiameter>=9)), "long","ERROR"))))
 
 
+# Cross referencing WoodType from the all_arch_data data frame
+all_shoot_data %<>% 
+	left_join(select(all_arch_data, ShootUUID, WoodType), by = "ShootUUID")
+
+
+
+#   Assigning ShootTypeCoarse based on ShootTypeRefined categories
+
 #   Shoot types by refined category, incorporating length, diameter, and pruning status
 #' Switching the logical columns to be just that, seems to have fixed the filtering issue here
 all_shoot_data <- within(all_shoot_data, ShootTypeRefined <- 
@@ -69,7 +77,6 @@ all_shoot_data <- within(all_shoot_data, ShootTypeRefined <-
 								if_else((ShootDiameter>=9 & ShootLength<40 & IsPruned),"long stubbed", 
 									if_else(ShootLength>=500,"very long","ERROR"))))))))))						
 						 
-#   Assigning ShootTypeCoarse based on ShootTypeRefined categories
 
 all_shoot_data %<>%
 	mutate(ShootTypeCoarse = 
@@ -78,16 +85,15 @@ all_shoot_data %<>%
 		   					if_else((ShootTypeRefined=="long" | ShootTypeRefined=="long pruned" | ShootTypeRefined=="long stubbed"  | ShootTypeRefined== "very long"), "long", "ERROR"))))
 
 
-# utilising coefficients from the power curve model to estimate leaf area
+# utilising coefficients from the shoot_leaf_area_import_and_plot power curve model (FitPwrVolume) to estimate leaf area
+require(graphics)
 
-
-coef(FitPwrVolume)
-FitPwrVolumeCoef <- coef(FitPwrVolume)
 
 all_shoot_data %<>%
-mutate(ShootVolume = (pi * ((ShootDiameter/20)^2)*ShootLength/3)) %>%
+mutate(ShootVolume = (pi * ((ShootDiameter/20)^2)*ShootLength/3))
 
-mutate(ShootLeafArea = ShootVolume*FitPwrVolume)
+all_shoot_data %<>%
+mutate(ShootLeafArea = predict(FitPwrVolume, newdata = all_shoot_data))
 
 
 		  

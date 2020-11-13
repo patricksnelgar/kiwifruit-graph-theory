@@ -19,7 +19,16 @@ for(vine_id in 1:9){
 		mutate(DistanceFromTrunk = (DistanceFromQuadrantX + OffsetX) * MultiplierX,
 			   DistanceFromLeader = (DistanceFromQuadrantY + OffsetY) * MultiplierY)
 		
+	# Pulling out wood type categories from the CaneUUID column
 	
+	temp_arch %<>%
+		mutate(WoodType =  
+			   	if_else(grepl("C", CaneUUID, fixed=TRUE), "Cane", 
+					if_else(grepl("H", CaneUUID, fixed=TRUE), "Short cane",
+						if_else(grepl("T", CaneUUID, fixed=TRUE), "Stub", 
+							if_else(grepl("P", CaneUUID, fixed=TRUE), "Spur",
+								if_else(grepl("A", CaneUUID, fixed=TRUE), "Adventitious", NA_character_))))))
+		
 	# Map start & end segment coords for ggplots gem_segment
 	# as ggplot is much faster for mapping the architecture than letting ggraph handle it.
 	temp_arch %<>%
@@ -29,9 +38,9 @@ for(vine_id in 1:9){
 		rename(SegmentStartX = DistanceFromTrunk, SegmentStartY = DistanceFromLeader) %>%
 		left_join(select(temp_arch, -ParentNodeID), by = "NodeID") %>%
 		rename(SegmentEndX = DistanceFromTrunk, SegmentEndY = DistanceFromLeader) %>%
-		select(VineUUID, ParentNodeID, NodeID, ShootUUID:OriginUUID, ParentOriginID, SegmentStartX, SegmentStartY,
+		select(VineUUID, ParentNodeID, NodeID, ShootUUID:OriginUUID, ParentOriginID, WoodType, SegmentStartX, SegmentStartY,
 			   SegmentEndX, SegmentEndY, SegmentLength:SegmentOrientation,
-			   Quadrant:Comments)
+			   Quadrant:SegmentOrientation, QuadrantFromLeader:EastWest, Comments)
 	
 	
 	# merge the current vine with full dataset.
