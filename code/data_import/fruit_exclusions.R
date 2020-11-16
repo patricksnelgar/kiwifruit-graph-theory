@@ -2,7 +2,7 @@
 
 # Dry matter exclusions
 all_fruit_data %<>%
-	mutate(DryMatter = if_else(FruitUUID == "3-F480" | 
+	mutate(DryMatter = ifelse(FruitUUID == "3-F480" | 
 							  FruitUUID == "9-F188", NA, DryMatter))
 
 all_fruit_data %>%
@@ -24,9 +24,9 @@ all_fruit_data %>%
 # Various metrics from different fruit
 all_fruit_data %<>%
 	filter() %>%
-	mutate(HueAngle1 = if_else(FruitUUID == "6-F1064", NA, HueAngle1),
-		   HueAngle2 = if_else(FruitUUID == "6-F1064", NA, HueAngle2),
-		   AverageHueAngle =if_else(FruitUUID == "6-F1064", NA, AverageHueAngle))
+	mutate(HueAngle1 = ifelse(FruitUUID == "6-F1064", NA, HueAngle1),
+		   HueAngle2 = ifelse(FruitUUID == "6-F1064", NA, HueAngle2),
+		   AverageHueAngle =ifelse(FruitUUID == "6-F1064", NA, AverageHueAngle))
 
 all_fruit_data %>%
 	filter(FruitUUID == "6-F1064") %$%

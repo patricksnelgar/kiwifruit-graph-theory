@@ -67,7 +67,7 @@ for(vine_id in 1:9){
 					width = 10,
 					height = 70,
 					shape = 21) +
-		scale_fill_brewer(name = "Soluable solids", type = "div", palette = "RdYlBu", direction = "1")
+		scale_fill_brewer(name = "Soluble solids", type = "div", palette = "RdYlBu", direction = "1")
 	
 	firmness_graph <- 
 		base_plot +

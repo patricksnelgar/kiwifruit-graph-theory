@@ -37,4 +37,4 @@ ggplot(leaf_area_data) + geom_point(aes(ShootLength, LeafArea)) + geom_line(aes(
 ggplot(leaf_area_data) + geom_point(aes(ShootVolume, LeafArea)) + geom_line(aes(ShootVolume, predict(FitPwrVolume)), colour = "green")
 
 # Save plots to output folder
-ggsave("Leaf Area vs shoot length power curve", )
+ggsave("Leaf Area vs shoot length power curve.png", path = "H:/9 Vines/kiwifruit-graph-theory/output",  dpi = 500)
