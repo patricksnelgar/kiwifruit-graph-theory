@@ -90,7 +90,7 @@ all_fruit_data %<>%
 all_fruit_data %<>% 
 	left_join(select(all_arch_data, 
 					 		ShootUUID,
-							VineTreatmentNoNumber, 
+							VineTreatmentNoNumber,
 					 		SegmentStartX, 
 					 		SegmentStartY,
 					 		SegmentDiameter,
@@ -104,6 +104,6 @@ all_fruit_data %<>%
 		mutate(AbsoluteLeaderCoord = abs(SegmentStartX), AbsoluteCaneCoord = abs(SegmentStartY))
 			   
 # Renaming column headers
-all_fruit_data <- all_fruit_data %>% rename(
-		FruitPerShoot = NumFruit, 
-		ShootLeafLoss = LeafLoss) 
+all_fruit_data <- all_fruit_data %>% 
+	rename(FruitPerShoot = NumFruit, 
+			ShootLeafLoss = LeafLoss) 
