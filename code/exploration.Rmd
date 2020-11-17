@@ -68,6 +68,12 @@ flowering_dates <- read_csv(here("input/flowering_dates.csv")) %>%
 
 ```
 
+```{r echo = FALSE}
+
+source(here("code/data_import/shoot_leaf_area_import_and_plot.R"))
+
+```
+
 ```{r vine_data_import, echo = FALSE}
 redo <- TRUE
 
@@ -154,12 +160,6 @@ pointXOffset <- function (central_xpoint, radius, point_pos){
 pointYOffset <- function (central_ypoint, radius, point_pos){
 	return(central_ypoint + radius * sin(point_pos * angle))
 }
-
-```
-
-```{r echo = FALSE}
-
-source(here("code/data_import/shoot_leaf_area_import_and_plot.R"))
 
 ```
 
