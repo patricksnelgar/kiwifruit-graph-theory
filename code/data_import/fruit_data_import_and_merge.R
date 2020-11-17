@@ -65,7 +65,7 @@ if(length(all_arch_data) <= 1){
 	all_fruit_data %<>%
 		left_join(flowering_dates) %>%
 		left_join(select(seed_counts, FruitUUID:SeedComments), by = "FruitUUID") %>%
-		mutate(DryWeight = DryMatter / (100 * FreshWeight)) %>%
+		mutate(DryWeight = FreshWeight*DryMatter/100) %>%
 		select(VineUUID:FloweringColour, FloweringDate, SubtendingLeafSize:DryMatter, DryWeight,
 			   FreshWeightSlice:SolubleSolidsContent, 
 			   SubSampleSeedWeight:SeedComments, FASTLabComments, Comments)
@@ -105,7 +105,5 @@ all_fruit_data %<>%
 			   
 # Renaming column headers
 all_fruit_data <- all_fruit_data %>% rename(
-		LeaderCoordinate = SegmentStartX, 
-		CaneCoordinate = SegmentStartY, 
 		FruitPerShoot = NumFruit, 
 		ShootLeafLoss = LeafLoss) 

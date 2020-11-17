@@ -39,5 +39,5 @@ for(vine_id in 1:9) {
 				theme_graph()
 		
 	
-	ggsave(here(paste0("output/Vine ", vine_id, "/vine", vine_id, "_tree_architecture.jpg")), width = 30, height = 20)
+	ggsave(here(paste0("output/Vine ", vine_id, "/vine", vine_id, "_tree_architecture.png")), width = 30, height = 20)
 }

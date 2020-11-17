@@ -86,7 +86,7 @@ for(vine_id in 1:9){
 			  vjust = 2,
 			  label_size = 24) 
 	
-	ggsave(here(paste0("output/Vine ", vine_id, "/vine", vine_id, "_all_metrics.jpg")), width = 30, height = 16)
+	ggsave(here(paste0("output/Vine ", vine_id, "/vine", vine_id, "_all_metrics.png")), width = 30, height = 16)
 	
 }
 
