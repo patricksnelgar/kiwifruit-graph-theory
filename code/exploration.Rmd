@@ -68,8 +68,14 @@ flowering_dates <- read_csv(here("input/flowering_dates.csv")) %>%
 
 ```
 
+```{r echo = FALSE}
+
+source(here("code/data_import/shoot_leaf_area_import_and_plot.R"))
+
+```
+
 ```{r vine_data_import, echo = FALSE}
-redo <- FALSE
+redo <- TRUE
 
 
 if(!file.exists(
@@ -93,19 +99,19 @@ if(!file.exists(
 	# imputing types which doesnt work for scarce columns (seed counts etc.)
 	all_fruit_data <- read_csv(here("workspace/all_fruit_data.csv"), col_types = "dddccccddcDcddddddddddddddddccc")
 	all_arch_data <- read_csv(here("workspace/all_arch_data.csv"), col_types = "dddccccdddddddddcc")
-	all_shoot_data <- read_csv(here("workspace/all_shoot_data.csv"), col_types = "dcdddccccdc")
+	all_shoot_data <- read_csv(here("workspace/all_shoot_data.csv"), col_types = "dcdddcccccdc")
 }
 
 
 	# Factors that allow for fixing vine positions in grid plots
 	all_arch_data %<>%
 		mutate(VineTreatmentOrder = factor(VineUUID, levels = c(1, 2, 3, 4, 6, 5, 9, 8, 7)),
-			   VineTreatment = if_else(VineUUID %in% c(1, 4, 9), "1 Conv", 
-			   					   if_else(VineUUID %in% c(2, 6, 8), "2 Stru",
-			   					   	   if_else(VineUUID %in% c(3, 5, 7), "3 Spur", NA))),
-			   VineRow = if_else(VineUUID %in% c(1:3), 1,
-			   				 if_else(VineUUID %in% c(4:6), 2,
-			   				 	   if_else(VineUUID %in% c(7:9), 3, NA)))) 
+			   VineTreatment = ifelse(VineUUID %in% c(1, 4, 9), "1 Conv", 
+			   					   ifelse(VineUUID %in% c(2, 6, 8), "2 Stru",
+			   					   	   ifelse(VineUUID %in% c(3, 5, 7), "3 Spur", NA))),
+			  	VineRow = ifelse(VineUUID %in% c(1:3), 1,
+			   				 ifelse(VineUUID %in% c(4:6), 2,
+			   				 	   ifelse(VineUUID %in% c(7:9), 3, NA)))) 
 	
 	
 	# Pull in x&y coords 
@@ -117,12 +123,12 @@ if(!file.exists(
 	# and 'binning' fruit metrics for visual display
 	all_fruit_data %<>%
 		mutate(VineTreatmentOrder = factor(VineUUID, levels = c(1, 2, 3, 4, 6, 5, 9, 8, 7)),
-		   	   VineTreatment = if_else(VineUUID %in% c(1, 4, 9), "1 Conv", 
-		   					   if_else(VineUUID %in% c(2, 6, 8), "2 Stru",
-		   					   if_else(VineUUID %in% c(3, 5, 7), "3 Spur", NA))),
-		   	   VineRow = if_else(VineUUID %in% c(1:3), 1,
-		   				 if_else(VineUUID %in% c(4:6), 2,
-		   				 if_else(VineUUID %in% c(7:9), 3, NA)))) %>%
+		   	   VineTreatment = ifelse(VineUUID %in% c(1, 4, 9), "1 Conv", 
+		   					   ifelse(VineUUID %in% c(2, 6, 8), "2 Stru",
+		   					   ifelse(VineUUID %in% c(3, 5, 7), "3 Spur", NA))),
+		   	   VineRow = ifelse(VineUUID %in% c(1:3), 1,
+		   				 ifelse(VineUUID %in% c(4:6), 2,
+		   				 ifelse(VineUUID %in% c(7:9), 3, NA)))) %>%
 		mutate(dm_bins = cut(DryMatter, c(0,14:23,30), 
 							 include.lowest = TRUE, 
 							 labels = c("< 14", paste(14:22, "to", 15:23), "> 23")),
@@ -132,7 +138,7 @@ if(!file.exists(
 		   			  		 labels = c("< 74g", paste("count", c(42, 39, 36, 33, 30, 27, 25, 22, 18, 16)))),
 		       hue_bins = cut(HueAngle1, seq(0, 120, 5), 
 		       			  	  labels = paste(seq(0, 115, 5), "to", seq(5, 120, 5))),
-			   ssc_bins = cut(SoluableSolidsContent, seq(5, 20, 1.5), 
+			   ssc_bins = cut(SolubleSolidsContent, seq(5, 20, 1.5), 
 			   			      include.lowest = TRUE, 
 			   			      labels = paste(seq(5, 18.5, 1.5), "to", seq(6.5, 20, 1.5))),
 		       firm_bins = cut(Firmness1, seq(0, 11, 1), 

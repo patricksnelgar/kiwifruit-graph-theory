@@ -22,9 +22,12 @@ for(vine_id in 1:9) {
 								 if_else(!is.na(OriginUUID), "Origin", "Junction")),
 								 levels = c("Shoot", "Origin", "Junction")),
 			   NodeLabel = if_else(!is.na(ShootUUID), ShootUUID, OriginUUID))
-	
+
+
 	# join previous node dataset and
 	# edge dataset into a ggraph object then plot
+	
+	
 	temp_arch %>%
 		rename(from = ParentNodeID, to = NodeID) %>%	
 		tbl_graph(vine_nodes, .) %>%
@@ -36,5 +39,5 @@ for(vine_id in 1:9) {
 				theme_graph()
 		
 	
-	ggsave(here(paste0("output/Vine ", vine_id, "/vine", vine_id, "_tree_architecture.jpg")), width = 30, height = 20)
+	ggsave(here(paste0("output/Vine ", vine_id, "/vine", vine_id, "_tree_architecture.png")), width = 30, height = 20)
 }

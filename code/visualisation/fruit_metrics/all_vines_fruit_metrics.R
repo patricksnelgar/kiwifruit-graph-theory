@@ -115,4 +115,4 @@
 			ggtitle("Fresh weight by Vine & treatment") +
 			theme_base_graph()
 	
-	ggsave(here("output/Vine 1 - 9 fresh weight by treatment map.jpg"), width = 20, height = 15)
+	ggsave(here("output/Vine 1 - 9 fresh weight by treatment map.png"), width = 20, height = 15)

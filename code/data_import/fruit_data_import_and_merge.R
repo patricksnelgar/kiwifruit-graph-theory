@@ -29,11 +29,11 @@ if(length(all_arch_data) <= 1){
 				   FreshWeightSlice = FWslice, DryWeightSlice = DWslice,
 				   HueAngle1 = Hue1, HueAngle2 = Hue2, 
 				   Firmness1 = Firm1, Firmness2 = Firm2,
-				   SoluableSolidsContent = SSC1, DryMatter = DM, AverageHueAngle = avHue,
+				   SolubleSolidsContent = SSC1, DryMatter = DM, AverageHueAngle = avHue,
 				   AverageFirmness = avFirm, FASTLabComments = Notes) %>%
 			select(VineUUID, TrayID:FruitUUID, ShootUUID:Quadrant, FruitPositionUpShoot:DistanceFromCanopyWire,
 				   FreshWeight, DryMatter, FreshWeightSlice, DryWeightSlice, HueAngle1, HueAngle2, AverageHueAngle,
-				   Firmness1, Firmness2, AverageFirmness, SoluableSolidsContent, FASTLabComments, Comments) 
+				   Firmness1, Firmness2, AverageFirmness, SolubleSolidsContent, FASTLabComments, Comments) 
 		
 		if(length(all_fruit_data) <= 1)
 			all_fruit_data <- temp_fruit_data
@@ -65,9 +65,45 @@ if(length(all_arch_data) <= 1){
 	all_fruit_data %<>%
 		left_join(flowering_dates) %>%
 		left_join(select(seed_counts, FruitUUID:SeedComments), by = "FruitUUID") %>%
-		mutate(DryWeight = DryMatter / (100 * FreshWeight)) %>%
+		mutate(DryWeight = FreshWeight*DryMatter/100) %>%
 		select(VineUUID:FloweringColour, FloweringDate, SubtendingLeafSize:DryMatter, DryWeight,
-			   FreshWeightSlice:SoluableSolidsContent, 
+			   FreshWeightSlice:SolubleSolidsContent, 
 			   SubSampleSeedWeight:SeedComments, FASTLabComments, Comments)
 	
 }
+
+
+# Cross referencing columns from the all_shoot_data data frame
+all_fruit_data %<>% 
+	left_join(select(all_shoot_data,
+							ShootUUID, 
+					 		WoodType, 
+						 	ShootTypeCoarse, 
+						 	ShootTypeRefined, 
+						 	ShootLeafArea, 
+						 	NumFruit, 
+						 	LeafLoss), 
+				  by = "ShootUUID")
+
+
+# Cross referencing columns from the all_arch_data data frame
+all_fruit_data %<>% 
+	left_join(select(all_arch_data, 
+					 		ShootUUID,
+							VineTreatmentNoNumber,
+					 		SegmentEndX, 
+					 		SegmentEndY,
+					 		SegmentDiameter,
+					 		QuadrantFromLeader,
+							QuadrantFromTrunk,
+							NorthSouth,
+							EastWest,
+					 		LeaderNS),
+					  by = "ShootUUID") %>%
+	
+		mutate(AbsoluteLeaderCoord = abs(SegmentEndX), AbsoluteCaneCoord = abs(SegmentEndY))
+			   
+# Renaming column headers
+all_fruit_data <- all_fruit_data %>% 
+	rename(FruitPerShoot = NumFruit, 
+			ShootLeafLoss = LeafLoss) 
