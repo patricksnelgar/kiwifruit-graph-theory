@@ -114,7 +114,12 @@ if(!file.exists(
 			   				 	   ifelse(VineUUID %in% c(7:9), 3, NA)))) 
 	
 	
-	# Pull in x&y coords 
+	# Pull in x&y coords to shoot and fruit data frames
+		
+	all_shoot_data %<>%
+		left_join(select(all_arch_data, ShootUUID, SegmentStartX, SegmentStartY,SegmentEndX, SegmentEndY))
+
+	
 	all_fruit_data %<>%
 		left_join(select(all_arch_data, ShootUUID, SegmentEndX, SegmentEndY))
 
@@ -144,6 +149,7 @@ if(!file.exists(
 		       firm_bins = cut(Firmness1, seq(0, 11, 1), 
 		       				   include.lowest = TRUE, 
 		       				   labels = paste(0:10, "to", 1:11)))
+
 
 
 ```
