@@ -29,25 +29,32 @@ all_shoot_data$ShootTypeRefined = factor(all_shoot_data$ShootTypeRefined, levels
 
 # 2D plot by Shoot Type - facet_grid is causing data point from all vines to plot on all facets - facet_wrap does not have the same issue
 
-ShootTypeMap<-
-	
-all_arch_data %>%
-	filter(!is.na(SegmentStartX) & !is.na(SegmentStartY) & !is.na(SegmentEndX) & !is.na(SegmentEndY)) %>%
-		ggplot() +
-		geom_segment(aes(x = SegmentStartY, y = SegmentStartX, xend = SegmentEndY, yend =  SegmentEndX, 
-			size = SegmentDiameter), colour = "lightgrey") +
-		scale_size_continuous(name = "Segment diameter", breaks = pretty_breaks(10)) +
-		geom_point(aes(x = SegmentEndY, y = SegmentEndX, colour = factor(ShootTypeCoarse)),alpha = 0.7, size=3.5, shape=19,data = filter(all_shoot_data, !is.na(ShootTypeCoarse)), na.rm = TRUE) +
-		scale_color_manual(breaks = c("short", "medium", "long"), values = c("#d1495b", "#edae49", "#66a182")) +
-		labs(x = NULL, y = NULL) +
-		facet_grid(vars(VineRow), vars(VineTreatment), labeller = labeller(VineTreatment = column_labels)) +
-	#	facet_wrap(~VineUUID, labeller = labeller(VineUUID = vine_labels)) +
-		geom_text(aes(-2200, -2300, label = vine_label), 
-			  size = 4,
-			  data = vine_order) + 
-		guides(size = FALSE) +
-		ggtitle("Shoot Type by Vine") +
-		theme_base_graph() 
+ShootTypeMap <-
+  all_arch_data %>%
+    left_join(select(all_shoot_data, ShootUUID, WoodType:ShootTypeCoarse), by = "ShootUUID") %>%
+  	filter(!is.na(SegmentStartX) & !is.na(SegmentStartY) & !is.na(SegmentEndX) & !is.na(SegmentEndY)) %>%
+  		ggplot() +
+  		geom_segment(aes(x = SegmentStartY, 
+  		                 y = SegmentStartX, 
+  		                 xend = SegmentEndY, 
+  		                 yend =  SegmentEndX, 
+  		                 size = SegmentDiameter), colour = "lightgrey") +
+  		scale_size_continuous(name = "Segment diameter", breaks = pretty_breaks(10)) +
+  		geom_point(aes(x = SegmentEndY, y = SegmentEndX, colour = ShootTypeCoarse),
+  		           alpha = 0.7,
+  		           size=3.5,
+  		           shape=19) +
+  		scale_color_manual(breaks = c("short", "medium", "long"), values = c("#d1495b", "#edae49", "#66a182")) +
+  		labs(x = NULL, y = NULL) +
+      facet_grid(vars(VineRow), vars(VineTreatment), labeller = labeller(VineTreatment = column_labels)) +
+  	  # facet_wrap(~VineUUID, labeller = labeller(VineUUID = vine_labels)) +
+  		# geom_text(aes(-2200, -2300, label = vine_label), 
+  		# 	  size = 4,
+  		# 	  data = vine_order) + 
+  		guides(size = FALSE) +
+  		ggtitle("Shoot Type by Vine") +
+  		theme_base_graph() 
+
 ShootTypeMap
 
 

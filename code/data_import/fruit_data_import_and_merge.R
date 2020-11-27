@@ -109,9 +109,6 @@ all_fruit_data <- all_fruit_data %>%
 			ShootLeafLoss = LeafLoss) 
 
 # Creating factors
-all_fruit_data %>%
-as_factor(QuadrantFromLeader, levels = c("1", "2", "3"))
-		  
-	as.factor(all_fruit_data$QuadrantFromLeader)
-	as.factor(all_fruit_data$QuadrantFromTrunk)
-	as.factor(all_fruit_data$FloweringDate)
+ all_fruit_data %<>%
+ 	mutate(QuadrantFromLeader = as.factor(QuadrantFromLeader),
+ 		   QuadrantFromTrunk = as.factor(QuadrantFromTrunk))

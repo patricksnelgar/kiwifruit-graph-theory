@@ -114,8 +114,6 @@ if(!file.exists(
 			   				 	   ifelse(VineUUID %in% c(7:9), 3, NA)))) 
 	
 	
-
-=======
 	# Pull in x&y coords to shoot and fruit data frames
 		
 	all_shoot_data %<>%
