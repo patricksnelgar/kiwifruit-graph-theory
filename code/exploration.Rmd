@@ -114,8 +114,10 @@ if(!file.exists(
 			   				 	   ifelse(VineUUID %in% c(7:9), 3, NA)))) 
 	
 	
-	# Pull in x&y coords
-	
+
+=======
+	# Pull in x&y coords to shoot and fruit data frames
+		
 	all_shoot_data %<>%
 		left_join(select(all_arch_data, ShootUUID, SegmentStartX, SegmentStartY,SegmentEndX, SegmentEndY))
 
