@@ -1,10 +1,5 @@
 library("ggpubr")
-install.packages("devtools")
-devtools::install_github("jaredhuling/jcolors")
 
-library(jcolors)
-
-jcolors('default')
 
 # Setting up df for facet_grid
 
@@ -27,9 +22,9 @@ all_shoot_data$ShootTypeCoarse = factor(all_shoot_data$ShootTypeCoarse, levels =
 all_shoot_data$ShootTypeRefined = factor(all_shoot_data$ShootTypeRefined, levels = c("stub","very short","short", "medium pruned", "medium", "long stubbed", "long pruned", "long", "very long"))
 
 
-# 2D plot by Shoot Type - facet_grid is causing data point from all vines to plot on all facets - facet_wrap does not have the same issue
+# 2D plot by ShootTypeRefined
 
-ShootTypeMap <-
+ShootTypeRMap <-
   all_arch_data %>%
     left_join(select(all_shoot_data, ShootUUID, WoodType:ShootTypeCoarse), by = "ShootUUID") %>%
   	filter(!is.na(SegmentStartX) & !is.na(SegmentStartY) & !is.na(SegmentEndX) & !is.na(SegmentEndY)) %>%
@@ -40,22 +35,185 @@ ShootTypeMap <-
   		                 yend =  SegmentEndX, 
   		                 size = SegmentDiameter), colour = "lightgrey") +
   		scale_size_continuous(name = "Segment diameter", breaks = pretty_breaks(10)) +
-  		geom_point(aes(x = SegmentEndY, y = SegmentEndX, colour = ShootTypeCoarse),
+  		geom_point(aes(x = SegmentEndY, y = SegmentEndX, colour = ShootTypeRefined),
   		           alpha = 0.7,
   		           size=3.5,
-  		           shape=19) +
-  		scale_color_manual(breaks = c("short", "medium", "long"), values = c("#d1495b", "#edae49", "#66a182")) +
+  		           shape=19,
+  				   na.rm=TRUE) +
+		scale_color_manual(breaks = c("stub","very short","short", "medium pruned", "medium", "long stubbed", "long pruned", "long", "very long"), values = c("#ff26a8","#ff002b","#ff9900", "#04ccde", "#003cb5", "#e5ff21", "#9ed61a", "#00c25e", "#12db00")) +
   		labs(x = NULL, y = NULL) +
-      facet_grid(vars(VineRow), vars(VineTreatment), labeller = labeller(VineTreatment = column_labels)) +
-  	  # facet_wrap(~VineUUID, labeller = labeller(VineUUID = vine_labels)) +
-  		# geom_text(aes(-2200, -2300, label = vine_label), 
-  		# 	  size = 4,
-  		# 	  data = vine_order) + 
+      	facet_grid(vars(VineRow), vars(VineTreatment), labeller = labeller(VineTreatment = column_labels)) +
+  	  	geom_text(aes(-2200, -2300, label = vine_label), 
+  		 	  size = 4,
+  		 	  data = vine_order) + 
   		guides(size = FALSE) +
-  		ggtitle("Shoot Type by Vine") +
+  		ggtitle("Shoot Type Refined by Vine") +
   		theme_base_graph() 
+ShootTypeRMap
 
-ShootTypeMap
+ggsave("Shoot Type Refined by Vine.png", path = here("output"),  dpi = 2000)
+
+
+# 2D plot by ShootTypeCoarse
+
+ShootTypeCMap <-
+	all_arch_data %>%
+	left_join(select(all_shoot_data, ShootUUID, WoodType:ShootTypeCoarse), by = "ShootUUID") %>%
+	filter(!is.na(SegmentStartX) & !is.na(SegmentStartY) & !is.na(SegmentEndX) & !is.na(SegmentEndY)) %>%
+	ggplot() +
+	geom_segment(aes(x = SegmentStartY, 
+					 y = SegmentStartX, 
+					 xend = SegmentEndY, 
+					 yend =  SegmentEndX, 
+					 size = SegmentDiameter), colour = "lightgrey") +
+	scale_size_continuous(name = "Segment diameter", breaks = pretty_breaks(10)) +
+	geom_point(aes(x = SegmentEndY, y = SegmentEndX, colour = ShootTypeCoarse),
+			   alpha = 0.7,
+			   size=3.5,
+			   shape=19,
+			   na.rm=TRUE) +
+	scale_color_manual(breaks = c("short", "medium", "long"), values = c("#d1495b", "#edae49", "#66a182")) +
+	labs(x = NULL, y = NULL) +
+	facet_grid(vars(VineRow), vars(VineTreatment), labeller = labeller(VineTreatment = column_labels)) +
+	geom_text(aes(-2200, -2300, label = vine_label), 
+			  size = 4,
+			  data = vine_order) + 
+	guides(size = FALSE) +
+	ggtitle("Shoot Type Coarse by Vine") +
+	theme_base_graph() 
+ShootTypeCMap
+
+ggsave("Shoot Type Coarse by Vine.png", path = here("output"),  dpi = 2000)
+
+
+# 2D plot by ShootLeafArea
+
+ShootLeafAreaMap <-
+	all_arch_data %>%
+	left_join(select(all_shoot_data, ShootUUID, WoodType:ShootLeafArea), by = "ShootUUID") %>%
+	filter(!is.na(SegmentStartX) & !is.na(SegmentStartY) & !is.na(SegmentEndX) & !is.na(SegmentEndY)) %>%
+	ggplot() +
+	geom_segment(aes(x = SegmentStartY, 
+					 y = SegmentStartX, 
+					 xend = SegmentEndY, 
+					 yend =  SegmentEndX, 
+					 size = SegmentDiameter), colour = "lightgrey") +
+	scale_size_continuous(name = "Segment diameter", breaks = pretty_breaks(10)) +
+	geom_point(aes(x = SegmentEndY, y = SegmentEndX, colour = ShootLeafArea),
+			   alpha = 1,
+			   size=6,
+			   shape=19,
+			   na.rm=TRUE) +
+	scale_color_viridis(option = "C", na.value = NA) +
+	labs(x = NULL, y = NULL) +
+	facet_grid(vars(VineRow), vars(VineTreatment), labeller = labeller(VineTreatment = column_labels)) +
+	geom_text(aes(-2200, -2300, label = vine_label), 
+			  size = 4,
+			  data = vine_order) + 
+	guides(size = FALSE) +
+	ggtitle("Shoot Leaf Area maps") +
+	theme_base_graph() 
+ShootLeafAreaMap
+
+ggsave("Shoot Leaf Area by Vine.png", path = here("output"),  dpi = 2000)
+
+# 2D plot by LogShootLeafArea
+
+LogShootLeafAreaMap <-
+	all_arch_data %>%
+	left_join(select(all_shoot_data, ShootUUID, WoodType:ShootLeafArea), by = "ShootUUID") %>%
+	mutate(LogShootLeafArea = log10(ShootLeafArea)) %>%
+	filter(!is.na(SegmentStartX) & !is.na(SegmentStartY) & !is.na(SegmentEndX) & !is.na(SegmentEndY)) %>%
+	ggplot() +
+	geom_segment(aes(x = SegmentStartY, 
+					 y = SegmentStartX, 
+					 xend = SegmentEndY, 
+					 yend =  SegmentEndX, 
+					 size = SegmentDiameter), colour = "lightgrey") +
+	scale_size_continuous(name = "Segment diameter", breaks = pretty_breaks(10)) +
+	geom_point(aes(x = SegmentEndY, y = SegmentEndX, colour = LogShootLeafArea),
+			   alpha = 1,
+			   size=6,
+			   shape=19,
+			   na.rm=TRUE) +
+	scale_color_viridis(option = "C", na.value = NA) +
+	labs(x = NULL, y = NULL) +
+	facet_grid(vars(VineRow), vars(VineTreatment), labeller = labeller(VineTreatment = column_labels)) +
+	geom_text(aes(-2200, -2300, label = vine_label), 
+			  size = 4,
+			  data = vine_order) + 
+	guides(size = FALSE) +
+	ggtitle("Log Shoot Leaf Area maps") +
+	theme_base_graph() 
+LogShootLeafAreaMap
+
+ggsave("Log Shoot Leaf Area by Vine.png", path = here("output"),  dpi = 2000)
+
+
+
+# 2D plot by ShootLength
+
+ShootLengthMap <-
+	all_arch_data %>%
+	left_join(select(all_shoot_data, ShootUUID, ShootLength, ShootDiameter, WoodType:ShootLeafArea), by = "ShootUUID") %>%
+	filter(!is.na(SegmentStartX) & !is.na(SegmentStartY) & !is.na(SegmentEndX) & !is.na(SegmentEndY)) %>%
+	ggplot() +
+	geom_segment(aes(x = SegmentStartY, 
+					 y = SegmentStartX, 
+					 xend = SegmentEndY, 
+					 yend =  SegmentEndX, 
+					 size = SegmentDiameter), colour = "lightgrey") +
+	scale_size_continuous(name = "Segment diameter", breaks = pretty_breaks(10)) +
+	geom_point(aes(x = SegmentEndY, y = SegmentEndX, colour = ShootLength),
+			   alpha = 1,
+			   size=6,
+			   shape=19,
+			   na.rm=TRUE) +
+	scale_color_viridis(option = "C", na.value = NA) +
+	labs(x = NULL, y = NULL) +
+	facet_grid(vars(VineRow), vars(VineTreatment), labeller = labeller(VineTreatment = column_labels)) +
+	geom_text(aes(-2200, -2300, label = vine_label), 
+			  size = 4,
+			  data = vine_order) + 
+	guides(size = FALSE) +
+	ggtitle("Shoot length maps") +
+	theme_base_graph() 
+ShootLengthMap
+
+ggsave("Shoot Length map by Vine.png", path = here("output"),  dpi = 2000)
+
+
+# 2D plot by ShootDiameter
+
+ShootDiameterMap <-
+	all_arch_data %>%
+	left_join(select(all_shoot_data, ShootUUID, ShootLength, ShootDiameter, WoodType:ShootLeafArea), by = "ShootUUID") %>%
+	filter(!is.na(SegmentStartX) & !is.na(SegmentStartY) & !is.na(SegmentEndX) & !is.na(SegmentEndY)) %>%
+	ggplot() +
+	geom_segment(aes(x = SegmentStartY, 
+					 y = SegmentStartX, 
+					 xend = SegmentEndY, 
+					 yend =  SegmentEndX, 
+					 size = SegmentDiameter), colour = "lightgrey") +
+	scale_size_continuous(name = "Segment diameter", breaks = pretty_breaks(10)) +
+	geom_point(aes(x = SegmentEndY, y = SegmentEndX, colour = ShootDiameter),
+			   alpha = 1,
+			   size=6,
+			   shape=19,
+			   na.rm=TRUE) +
+	scale_color_viridis(option = "C", na.value = NA) +
+	labs(x = NULL, y = NULL) +
+	facet_grid(vars(VineRow), vars(VineTreatment), labeller = labeller(VineTreatment = column_labels)) +
+	geom_text(aes(-2200, -2300, label = vine_label), 
+			  size = 4,
+			  data = vine_order) + 
+	guides(size = FALSE) +
+	ggtitle("Shoot Diameter maps") +
+	theme_base_graph() 
+ShootDiameterMap
+
+ggsave("Shoot Diameter map by Vine.png", path = here("output"),  dpi = 2000)
+
 
 
 # Scatter plots
