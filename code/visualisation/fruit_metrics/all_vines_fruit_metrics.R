@@ -1,7 +1,15 @@
+	#Facet grid set up
+
+vine_labels <- paste("Vine", c(1:9))
+names(vine_labels) <- c(1:9)
+column_labels <- c("Conventional", "Strung", "Spur")
+names(column_labels) <- c("1 Conv", "2 Stru", "3 Spur")
+
+
+
 	
 	#### Basic DM by Vine ####
-	vine_labels <- paste("Vine", c(1:9))
-	names(vine_labels) <- c(1:9)
+
 	
 	all_arch_data %>%
 		filter(!is.na(SegmentStartX) & !is.na(SegmentStartY) & !is.na(SegmentEndX) & !is.na(SegmentEndY)) %>%
@@ -25,9 +33,6 @@
 	ggsave(here("output/Vine 1 - 9 dry matter map.png"), width = 20, height = 15)
 	
 	#### Dry matter (binned) by treatment ####
-	
-	column_labels <- c("Conventional", "Strung", "Spur")
-	names(column_labels) <- c("1 Conv", "2 Stru", "3 Spur")
 	
 	vine_metrics <- all_fruit_data %>%
 						group_by(VineUUID) %>%

@@ -1,4 +1,3 @@
-library("ggpubr")
 
 
 # Setting up df for facet_grid

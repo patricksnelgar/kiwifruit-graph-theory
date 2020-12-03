@@ -119,5 +119,3 @@ mutate(ShootLeafArea = predict(FitPwrVolume, newdata = all_shoot_data))
 # }
 
 # rm(temp_shoots)
-
-

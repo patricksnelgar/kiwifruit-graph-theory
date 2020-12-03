@@ -21,6 +21,7 @@ library(lubridate)
 library(scales)
 library(cowplot)
 library(here)
+library(viridis)
 
 source(here("code/theme.R"))
 
@@ -152,6 +153,35 @@ if(!file.exists(
 
 ```
 
+```{r graphing_setup, echo = FALSE}
+
+theme_patrick <- function() {
+	theme_bw() %+replace%
+		theme(plot.title = element_text(hjust = 0.5, 
+										size = 20,
+										margin = margin(b = 5))
+		)
+}
+
+theme_base_graph <- function() {
+	theme_bw() %+replace%
+		theme(plot.title = element_text(size = 18, hjust = 0.5),
+			  axis.ticks = element_blank(),
+			  axis.text = element_blank(),
+			  strip.text.x = element_text(size = 12),
+			  strip.text.y = element_blank())
+}
+
+
+vine_labels <- paste("Vine", c(1:9))
+names(vine_labels) <- c(1:9)
+column_labels <- c("Conventional", "Strung", "Spur")
+names(column_labels) <- c("1 Conv", "2 Stru", "3 Spur")
+
+```
+
+
+
 ```{r functions, echo = FALSE}
 
 # maximum 9 fruit per shoot
@@ -182,6 +212,13 @@ source(here("code/visualisation/fruit_metrics/individual_vine_fruit_metrics.R"))
 ```{r vine_architectures, echo = FALSE}
 
 source(here("code/visualisation/vine_architectures.R"))
+
+
+```
+
+```{r kris_plots, echo = FALSE}
+
+source(here("code/visualisation/kris_plots.R"))
 
 
 ```
