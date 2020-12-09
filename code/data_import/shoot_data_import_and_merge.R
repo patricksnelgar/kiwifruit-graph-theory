@@ -14,7 +14,7 @@ all_shoot_data <-
 	read_csv(here("input/all_shoots_stacked.csv")) %>%
 	mutate(ShootUUID = paste(Vine, Shoot, sep = "-S")) %>%
 	rename(VineUUID = 1, LeafLoss = 6,
-		   NumFruit = 7, ShootLength = 8,
+		   FruitPerShoot = 7, ShootLength = 8,
 		   ShootType = 9, IsPruned = 11,
 		   HasRegrowth = 12, IsStrung = 13,
 		   LengthIsEstimate = 14, ShootDiameter = 15,
@@ -23,7 +23,7 @@ all_shoot_data <-
 		   HasRegrowth = if_else(HasRegrowth %in% "y", TRUE, FALSE),
 		   IsStrung = if_else(IsStrung %in% "y", TRUE, FALSE),
 		   LengthIsEstimate = if_else(LengthIsEstimate %in% "y", TRUE, FALSE)) %>%
-	select(VineUUID, ShootUUID, LeafLoss, NumFruit,
+	select(VineUUID, ShootUUID, LeafLoss, FruitPerShoot,
 		   ShootLength, IsPruned, 
 		   HasRegrowth, IsStrung, LengthIsEstimate, ShootDiameter, Comments)
 
@@ -101,7 +101,7 @@ mutate(ShootLeafArea = predict(FitPwrVolume, newdata = all_shoot_data))
 # for(vine_id in 1:9){
 # 	# using numbers to reference column locations as most have spaces in the original
 # 	temp_shoots <- read_csv(paste0("input/shoot_data/shoot_data_vine", vine_id ,".csv")) %>%
-# 						rename(LeafLoss = 5, NumFruit = 6, ShootLength = 7,
+# 						rename(LeafLoss = 5, FruitPerShoot = 6, ShootLength = 7,
 # 							   ShootType = 8, IsPruned = 9, HasRegrowth = 10,
 # 							   IsStrung = 11, ShootDiameter = 12, Comments = 13) %>%
 # 						mutate(ShootUUID = paste(vine_id, Shoot, sep = "-"),

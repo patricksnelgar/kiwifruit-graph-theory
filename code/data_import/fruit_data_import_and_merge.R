@@ -81,7 +81,7 @@ all_fruit_data %<>%
 						 	ShootTypeCoarse, 
 						 	ShootTypeRefined, 
 						 	ShootLeafArea, 
-						 	NumFruit, 
+						 	FruitPerShoot, 
 						 	LeafLoss), 
 				  by = "ShootUUID")
 
@@ -105,8 +105,7 @@ all_fruit_data %<>%
 			   
 # Renaming column headers
 all_fruit_data <- all_fruit_data %>% 
-	rename(FruitPerShoot = NumFruit, 
-			ShootLeafLoss = LeafLoss) 
+	rename(ShootLeafLoss = LeafLoss) 
 
 # Creating factors
  all_fruit_data %<>%

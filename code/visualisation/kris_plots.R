@@ -310,6 +310,38 @@ FWHisto
 
 ggsave("Fresh Weight distribution by vine.png", path = here("output"),  dpi = 2000)
 
+FlwrTempDF <- read_csv(here("input/flowering_weather.csv")) %>%
+	mutate(FlTempDate = dmy(Date), MaxTemp=MaxTemp/100, MinTemp=MinTemp/100, MeanTemp=MeanTemp/100) %>%
+	filter(FlTempDate >= as.Date("2019-10-27"), FlTempDate <= as.Date("2019-11-12"))
+
+
+FlowerHisto <- 
+	all_fruit_data %>%
+	filter(!is.na(FloweringDate)) %>%
+	ggplot(aes(x = FloweringDate, fill=VineTreatmentNoNumber)) + 
+	geom_bar(aes(y = (..count..)/sum(..count..)), position = "dodge") +
+	geom_line(data = FlwrTempDF, aes(x = FlTempDate, y = MaxTemp), inherit.aes = FALSE) +
+	geom_line(data = FlwrTempDF, aes(x = FlTempDate, y = MeanTemp), inherit.aes = FALSE) +
+	geom_line(data = FlwrTempDF, aes(x = FlTempDate, y = MinTemp), inherit.aes = FALSE) +
+	ggtitle("Flowering Date distribution by vine") +
+	labs(x= "Flowering Date") +
+		theme(
+		plot.margin = margin(0.2,0.2,0.2,0.2, "cm"),
+		panel.background = element_rect(fill = 'white', colour = 'black'), 
+		panel.grid = element_line(color = "gray 90"), 
+		panel.border = element_rect(color = "black", fill=NA), 
+		legend.justification = c(1, 1), 
+		legend.position = c(1.14,1),
+		legend.text=element_text(size=rel(0.9)),  
+		strip.background.y=element_blank(), 
+		strip.text.y = element_blank(), 
+		strip.background.x = element_rect(colour = "black", fill="gray 80"), 
+		strip.text.x = element_text(size = 11)) +
+	scale_colour_manual(values=c("grey20", "grey20", "grey20"))+
+	scale_fill_manual(values=c("#4256FF", "#FF41A3", "#00D10D"))
+FlowerHisto	
+
+
 
 FlowerHisto <- 
 all_fruit_data %>%
@@ -318,7 +350,7 @@ filter(!is.na(FloweringDate)) %>%
 	geom_histogram(aes(y =..density.., fill = VineTreatment, color=VineTreatment), binwidth=2)+
 	ggtitle("Flowering Date distribution by vine") +
 	labs(x= "Flowering Date") +
-	facet_grid(vars(VineRow), vars(VineTreatment), labeller = labeller(VineTreatment = column_labels)) +
+		facet_grid(vars(VineRow), vars(VineTreatment), labeller = labeller(VineTreatment = column_labels)) +
 	theme(
 		plot.margin = margin(0.2,0.2,0.2,0.2, "cm"),
 		panel.background = element_rect(fill = 'white', colour = 'black'), 
@@ -337,7 +369,14 @@ filter(!is.na(FloweringDate)) %>%
 	
 	ggsave("Flowering date distribution by vine.png", path = here("output"),  dpi = 2000)
 	
-	
+
+
+	geom_point(aes(x = FlTempDate, y = MaxTemp)) +
+
+FlwrTempDF
+
+
+
 SSCHisto<-
 all_fruit_data %>%
 filter(!is.na(SolubleSolidsContent)) %>%

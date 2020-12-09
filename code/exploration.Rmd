@@ -122,6 +122,7 @@ if(!file.exists(
 
 	all_fruit_data %<>%
 		left_join(select(all_arch_data, ShootUUID, SegmentEndX, SegmentEndY))
+		
 
 		# Factors that allow for fixing vine positions in grid plots
 	# and 'binning' fruit metrics for visual display
@@ -149,8 +150,16 @@ if(!file.exists(
 		       				   include.lowest = TRUE, 
 		       				   labels = paste(0:10, "to", 1:11)))
 
+	
+# Replacing FruitPerShoot with a tallied value, as there were some innacuracies in the all_shoot_data values.	
+		
+#fruitdif <- all_fruit_data %>%	
+#			  group_by(ShootUUID) %>% 
+ # 				mutate(FruitPerShoot = n()) %>%
+#				filter(FruitPerShoot < FruitPositionUpShoot) %>%
+#				select(VineUUID, FruitUUID, ShootUUID, FruitPerShoot, FruitPositionUpShoot)
 
-
+		write_csv(all_fruit_data, here("workspace/all_fruit_data.csv"), na = "")
 ```
 
 ```{r graphing_setup, echo = FALSE}
