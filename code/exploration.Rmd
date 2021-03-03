@@ -83,11 +83,7 @@ if(!file.exists(
 	  here("workspace/all_arch_data.csv"), 
 	  here("workspace/all_shoot_data.csv"))) || redo){
 	
-	source(here("code/data_import/architecture_data_import_and_merge.R"))
-	source(here("code/data_import/shoot_data_import_and_merge.R"))
-	source(here("code/data_import/fruit_data_import_and_merge.R"))
-	
-	source(here("code/data_import/fruit_exclusions.R"))
+	source(here("code/data_import/import_all_data.R"))
 
 	
 	write_csv(all_fruit_data, here("workspace/all_fruit_data.csv"), na = "")

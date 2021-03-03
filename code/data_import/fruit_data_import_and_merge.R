@@ -70,6 +70,8 @@ if(length(all_arch_data) <= 1){
 			   FreshWeightSlice:SolubleSolidsContent, 
 			   SubSampleSeedWeight:SeedComments, FASTLabComments, Comments)
 	
+	rm(seed_counts)
+	
 }
 
 

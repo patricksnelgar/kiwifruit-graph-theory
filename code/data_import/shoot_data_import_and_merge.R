@@ -95,7 +95,9 @@ mutate(ShootVolume = (pi * ((ShootDiameter/20)^2)*ShootLength/3))
 all_shoot_data %<>%
 mutate(ShootLeafArea = predict(FitPwrVolume, newdata = all_shoot_data))
 
-
+rm(FitPwrLength)
+rm(FitPwrVolume)
+rm(leaf_area_data)
 		  
 
 # for(vine_id in 1:9){
