@@ -9,6 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 
+library(Rmisc)
 library(tidygraph)
 library(tidyverse)
 library(ggraph)
@@ -22,6 +23,9 @@ library(scales)
 library(cowplot)
 library(here)
 library(viridis)
+library(ggrepel)
+
+
 
 source(here("code/theme.R"))
 
@@ -36,6 +40,34 @@ if(!dir.exists(here("output"))){
 if(!dir.exists(here("workspace")))
 	dir.create(here("workspace"))
 ```
+
+```{r graphing_setup, echo = FALSE}
+
+theme_patrick <- function() {
+	theme_bw() %+replace%
+		theme(plot.title = element_text(hjust = 0.5, 
+										size = 20,
+										margin = margin(b = 5))
+		)
+}
+
+theme_base_graph <- function() {
+	theme_bw() %+replace%
+		theme(plot.title = element_text(size = 18, hjust = 0.5),
+			  axis.ticks = element_blank(),
+			  axis.text = element_blank(),
+			  strip.text.x = element_text(size = 12),
+			  strip.text.y = element_blank())
+}
+
+
+vine_labels <- paste("Vine", c(1:9))
+names(vine_labels) <- c(1:9)
+column_labels <- c("Conventional", "Strung", "Spur")
+names(column_labels) <- c("1 Conv", "2 Stru", "3 Spur")
+
+```
+
 
 
 ```{r misc_data, echo = FALSE}
@@ -151,44 +183,23 @@ if(!file.exists(
 		       				   labels = paste(0:10, "to", 1:11)))
 
 	
-# Replacing FruitPerShoot with a tallied value, as there were some innacuracies in the all_shoot_data values.	
-		
-#fruitdif <- all_fruit_data %>%	
-#			  group_by(ShootUUID) %>% 
- # 				mutate(FruitPerShoot = n()) %>%
-#				filter(FruitPerShoot < FruitPositionUpShoot) %>%
-#				select(VineUUID, FruitUUID, ShootUUID, FruitPerShoot, FruitPositionUpShoot)
+	# Replacing X-SNA values in the ShootUUID column which result from concatenating the X and S characters with the 		ShootID value	
+	
+all_fruit_data <- all_fruit_data %>%	
+	mutate(ShootUUID=replace(ShootUUID, ShootUUID=="1-SNA", NA),
+		   ShootUUID=replace(ShootUUID, ShootUUID=="2-SNA", NA),
+		   ShootUUID=replace(ShootUUID, ShootUUID=="3-SNA", NA),
+		   ShootUUID=replace(ShootUUID, ShootUUID=="4-SNA", NA),
+		   ShootUUID=replace(ShootUUID, ShootUUID=="5-SNA", NA),
+		   ShootUUID=replace(ShootUUID, ShootUUID=="6-SNA", NA),
+		   ShootUUID=replace(ShootUUID, ShootUUID=="7-SNA", NA),
+		   ShootUUID=replace(ShootUUID, ShootUUID=="8-SNA", NA),
+		   ShootUUID=replace(ShootUUID, ShootUUID=="9-SNA", NA)) 
+
+
 
 		write_csv(all_fruit_data, here("workspace/all_fruit_data.csv"), na = "")
 ```
-
-```{r graphing_setup, echo = FALSE}
-
-theme_patrick <- function() {
-	theme_bw() %+replace%
-		theme(plot.title = element_text(hjust = 0.5, 
-										size = 20,
-										margin = margin(b = 5))
-		)
-}
-
-theme_base_graph <- function() {
-	theme_bw() %+replace%
-		theme(plot.title = element_text(size = 18, hjust = 0.5),
-			  axis.ticks = element_blank(),
-			  axis.text = element_blank(),
-			  strip.text.x = element_text(size = 12),
-			  strip.text.y = element_blank())
-}
-
-
-vine_labels <- paste("Vine", c(1:9))
-names(vine_labels) <- c(1:9)
-column_labels <- c("Conventional", "Strung", "Spur")
-names(column_labels) <- c("1 Conv", "2 Stru", "3 Spur")
-
-```
-
 
 
 ```{r functions, echo = FALSE}
