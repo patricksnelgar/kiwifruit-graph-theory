@@ -55,7 +55,7 @@ if(length(all_arch_data) <= 1){
 							   SubSampleSeedWeight = 5,
 							   TotalSeedWeight = 6,
 							   AverageSeedCount = 7,
-							   SeedComments = 8) %>%
+							   SeedComments = 8,) %>%
 						filter(!is.na(FruitUUID)) %>%
 						mutate(VineID = gsub("([1-9])(.*)", "\\1", FruitUUID),
 							   FruitUUID = paste(VineID, as.numeric(gsub("([1-9])([0-9]*)", "\\2", FruitUUID)), sep = "-F"))
@@ -64,11 +64,11 @@ if(length(all_arch_data) <= 1){
 	# drop unwanted columns and reorder
 	all_fruit_data %<>%
 		left_join(flowering_dates) %>%
-		left_join(select(seed_counts, FruitUUID:SeedComments), by = "FruitUUID") %>%
+		left_join(select(seed_counts, FruitUUID:CarpelCount), by = "FruitUUID") %>%
 		mutate(DryWeight = FreshWeight*DryMatter/100) %>%
 		select(VineUUID:FloweringColour, FloweringDate, SubtendingLeafSize:DryMatter, DryWeight,
 			   FreshWeightSlice:SolubleSolidsContent, 
-			   SubSampleSeedWeight:SeedComments, FASTLabComments, Comments)
+			   SubSampleSeedWeight:CarpelCount, FASTLabComments, Comments)
 	
 }
 
@@ -80,6 +80,8 @@ all_fruit_data %<>%
 					 		WoodType, 
 						 	ShootTypeCoarse, 
 						 	ShootTypeRefined, 
+					 		ShootLength,
+					 		ShootDiameter,
 						 	ShootLeafArea, 
 						 	FruitPerShoot, 
 						 	LeafLoss), 

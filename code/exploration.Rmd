@@ -9,6 +9,12 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 
 
+library(agricolae)
+library(shadowtext)
+library(lsmeans)
+library(AICcmodavg)
+library(car)
+library(ggpubr)
 library(Rmisc)
 library(tidygraph)
 library(tidyverse)
@@ -195,6 +201,20 @@ all_fruit_data <- all_fruit_data %>%
 		   ShootUUID=replace(ShootUUID, ShootUUID=="7-SNA", NA),
 		   ShootUUID=replace(ShootUUID, ShootUUID=="8-SNA", NA),
 		   ShootUUID=replace(ShootUUID, ShootUUID=="9-SNA", NA)) 
+
+
+	# make a days since start of flowering column from FloweringDates
+all_fruit_data <- all_fruit_data %>%	
+	mutate(FloweringDays = case_when(
+		FloweringDate== as.Date("2019-10-27") ~ "1",
+		FloweringDate== as.Date("2019-10-29") ~ "3", 
+		FloweringDate== as.Date("2019-10-31") ~ "5",
+		FloweringDate== as.Date("2019-11-02") ~ "7",
+		FloweringDate== as.Date("2019-11-04") ~ "9",
+		FloweringDate== as.Date("2019-11-06") ~ "11",
+		FloweringDate== as.Date("2019-11-08") ~ "13",
+		FloweringDate== as.Date("2019-11-10") ~ "15",
+		FloweringDate== as.Date("2019-11-12") ~ "17"))
 
 
 
