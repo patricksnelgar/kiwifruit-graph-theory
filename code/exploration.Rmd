@@ -28,36 +28,28 @@ source(here("code/theme.R"))
 if(!dir.exists(here("output"))){
 	dir.create(here("output"))
 	for(i in 1:9)
-		dir.create(here(
-			paste("output/Vine", i)))
-}
+		dir.create(paste(here("output/Vine"), i))
+} 
 
 if(!dir.exists(here("workspace")))
 	dir.create(here("workspace"))
 ```
 
+```{r misc_data_import, echo = FALSE}
 
-```{r misc_data, echo = FALSE}
-
-# relational information for each of the quadrants
-quadrant_info <- 
-	data.frame(Quadrant = 1:36,
-			   OffsetX = rep(c(1000, 500, 0, 0, 500, 1000), each = 6),
-			   OffsetY = rep(c(2000, 1000, 0, 0, 1000, 2000), 6),
-			   MultiplierX = rep(c(-1,1), each = 18),
-			   MultiplierY = rep(rep(c(-1,1), each = 3), 6),
-			   QuadrantFromLeader = rep(c(3:1, 1:3), 6), 
-			   QuadrantFromTrunk = rep(c(3:1, 1:3), each = 6),
-			   NorthSouth = rep(c("S", "N"), each = 18),
-			   EastWest = rep(rep(
-		   						  c("W", "E"), 
-		   						  each = 3
-		   						  ),
-			   			   	  6)
-			   )
+quadrant_info <- read_csv(here("input/quadrant_info.csv")) %>%
+					mutate(QuadrantFromLeader = rep(c(3:1, 1:3), 6), 
+						   QuadrantFromTrunk = rep(c(3:1, 1:3), each = 6),
+						   EastWest = rep(rep(
+					   						  c("W", "E"), 
+					   						  each = 3
+					   						  ),
+						   			   	  6),
+						   NorthSouth = rep(c("S", "N"), each = 18)
+						   )
 
 # x&y coords for overlaying the quadrant IDs
-# only works when vine is plotted with leader running horizontal (swap x and y).
+# only works when vine is plotted with leader running horizontal.
 quadrant_labels <- data.frame(x = rep(c(-1250, -750, -250, 250, 750, 1250), each = 6),
 							  y = rep(c(2500, 1500, 500, -500, -1500, -2500), 6),
 							  label = 1:36)
@@ -68,14 +60,9 @@ flowering_dates <- read_csv(here("input/flowering_dates.csv")) %>%
 
 ```
 
-```{r echo = FALSE}
-
-source(here("code/data_import/shoot_leaf_area_import_and_plot.R"))
-
-```
-
 ```{r vine_data_import, echo = FALSE}
 redo <- TRUE
+
 
 
 if(!file.exists(
@@ -93,6 +80,7 @@ if(!file.exists(
 } else {
 	# Need to set column types for all as only the first 1000 rows are used for
 	# imputing types which doesnt work for scarce columns (seed counts etc.)
+
 	all_fruit_data <- read_csv(here("workspace/all_fruit_data.csv"), col_types = "dddccccddcDcddddddddddddddddccc")
 	all_arch_data <- read_csv(here("workspace/all_arch_data.csv"), col_types = "dddccccdddddddddcc")
 	all_shoot_data <- read_csv(here("workspace/all_shoot_data.csv"), col_types = "dcdddcccccdc")
@@ -105,11 +93,13 @@ if(!file.exists(
 			   VineTreatment = ifelse(VineUUID %in% c(1, 4, 9), "1 Conv", 
 			   					   ifelse(VineUUID %in% c(2, 6, 8), "2 Stru",
 			   					   	   ifelse(VineUUID %in% c(3, 5, 7), "3 Spur", NA))),
+
 			  	VineRow = ifelse(VineUUID %in% c(1:3), 1,
 			   				 ifelse(VineUUID %in% c(4:6), 2,
 			   				 	   ifelse(VineUUID %in% c(7:9), 3, NA)))) 
 	
 	
+
 	# Pull in x&y coords to shoot and fruit data frames
 		
 	all_shoot_data %<>%
@@ -118,7 +108,7 @@ if(!file.exists(
 	all_fruit_data %<>%
 		left_join(select(all_arch_data, ShootUUID, SegmentEndX, SegmentEndY))
 
-		# Factors that allow for fixing vine positions in grid plots
+	# Factors that allow for fixing vine positions in grid plots
 	# and 'binning' fruit metrics for visual display
 	all_fruit_data %<>%
 		mutate(VineTreatmentOrder = factor(VineUUID, levels = c(1, 2, 3, 4, 6, 5, 9, 8, 7)),
@@ -137,14 +127,13 @@ if(!file.exists(
 		   			  		 labels = c("< 74g", paste("count", c(42, 39, 36, 33, 30, 27, 25, 22, 18, 16)))),
 		       hue_bins = cut(HueAngle1, seq(0, 120, 5), 
 		       			  	  labels = paste(seq(0, 115, 5), "to", seq(5, 120, 5))),
+
 			   ssc_bins = cut(SolubleSolidsContent, seq(5, 20, 1.5), 
 			   			      include.lowest = TRUE, 
 			   			      labels = paste(seq(5, 18.5, 1.5), "to", seq(6.5, 20, 1.5))),
 		       firm_bins = cut(Firmness1, seq(0, 11, 1), 
 		       				   include.lowest = TRUE, 
 		       				   labels = paste(0:10, "to", 1:11)))
-
-
 
 ```
 
@@ -165,11 +154,13 @@ pointYOffset <- function (central_ypoint, radius, point_pos){
 
 ```{r all_vines_plot, echo = FALSE}
 
+
 source(here("code/visualisation/fruit_metrics/all_vines_fruit_metrics.R"))
 
 ```
 
 ```{r individual_vine_fruit_metrics, echo = FALSE}
+
 
 source(here("code/visualisation/fruit_metrics/individual_vine_fruit_metrics.R"))
 
@@ -177,7 +168,7 @@ source(here("code/visualisation/fruit_metrics/individual_vine_fruit_metrics.R"))
 
 ```{r vine_architectures, echo = FALSE}
 
-source(here("code/visualisation/vine_architectures.R"))
 
+source(here("code/visualisation/vine_architectures.R"))
 
 ```
