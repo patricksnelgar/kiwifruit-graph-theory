@@ -1,3 +1,6 @@
+# Generate graphs for each metric for each vine,
+# combine the plots and output.
+
 
 for(vine_id in 1:9){
 	
@@ -64,7 +67,7 @@ for(vine_id in 1:9){
 					width = 10,
 					height = 70,
 					shape = 21) +
-		scale_fill_brewer(name = "Soluable solids", type = "div", palette = "RdYlBu", direction = "1")
+		scale_fill_brewer(name = "Soluble solids", type = "div", palette = "RdYlBu", direction = "1")
 	
 	firmness_graph <- 
 		base_plot +
@@ -83,7 +86,7 @@ for(vine_id in 1:9){
 			  vjust = 2,
 			  label_size = 24) 
 	
-	ggsave(paste0("output/Vine ", vine_id, "/vine", vine_id, "_all_metrics.jpg"), width = 30, height = 16)
+	ggsave(here(paste0("output/Vine ", vine_id, "/vine", vine_id, "_all_metrics.png")), width = 30, height = 16)
 	
 }
 
