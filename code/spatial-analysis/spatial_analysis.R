@@ -323,30 +323,42 @@ res_plot.fw <- res_plot.fw %>% group_by(VineUUID) %>%
 #fitted freshweight
 gridExtra::grid.arrange(
 	ggplot(res_plot.fw %>% filter(vine_type=="conventional"), aes(x=x, y=y , group=CaneUUID,fill=fitted.fw)) + 
-		geom_tile() + facet_grid(~VineUUID,scales="free") + 
+		geom_tile() + 
+		facet_grid(~VineUUID,scales="free") + 
 		theme_classic() + 
 		theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(),
-			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + ggtitle("Vinetype:Conventional"),
+			  legend.position = "bottom") + 
+		scale_fill_viridis_c(direction = -1) + 
+		ggtitle("Vinetype:Conventional"),
 	
 	ggplot(res_plot.fw %>% filter(!vine_type=="conventional"), aes(x=x, y=y , group=CaneUUID,fill=fitted.fw)) + 
-		geom_tile() + facet_grid(~VineUUID,scales="free") + 
+		geom_tile() + 
+		facet_grid(~VineUUID,scales="free") + 
 		theme_classic() + 
 		theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(),
-			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + ggtitle("Vinetype:Strung"),ncol=1)
+			  legend.position = "bottom") + 
+		scale_fill_viridis_c(direction = -1) + 
+		ggtitle("Vinetype:Strung"),ncol=1)
 
 #freshweight thresholds
 gridExtra::grid.arrange(
 	ggplot(res_plot.fw %>% filter(vine_type=="conventional"), aes(x=x, y=y , group=CaneUUID,fill=fw_threshold)) + 
-		geom_tile() + facet_grid(~VineUUID,scales="free") + 
+		geom_tile() + 
+		facet_grid(~VineUUID,scales="free") + 
 		theme_classic() + 
 		theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(),
-			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + ggtitle("Vinetype:Conventional"),
+			  legend.position = "bottom") + 
+		scale_fill_viridis_c(direction = -1) + 
+		ggtitle("Vinetype:Conventional"),
 	
 	ggplot(res_plot.fw %>% filter(!vine_type=="conventional"), aes(x=x, y=y , group=CaneUUID,fill=fw_threshold)) + 
-		geom_tile() + facet_grid(~VineUUID,scales="free") + 
+		geom_tile() + 
+		facet_grid(~VineUUID,scales="free") + 
 		theme_classic() + 
 		theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(),
-			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + ggtitle("Vinetype:Strung"),ncol=1)
+			  legend.position = "bottom") + 
+		scale_fill_viridis_c(direction = -1) + 
+		ggtitle("Vinetype:Strung"),ncol=1)
 
 
 #other random effects
