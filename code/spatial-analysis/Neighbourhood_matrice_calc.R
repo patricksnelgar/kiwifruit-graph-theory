@@ -8,27 +8,33 @@
 rm(list=ls())
 
 #packages
+library(sf)
+library(rgeos)
+library(raster)
+library(spdep)
 library(ggplot2)
 library(dplyr)
 library(tidyverse)
 library(here)
 library(scales)
-library(sf)
-library(rgeos)
-library(raster)
-library(spdep)
+
+
 #------------------------------------------------------------------------------------------------------------------------------
 
 #read in data 
 
 #------------------------------------------------------------------------------------------------------------------------------
 
-#taking all data sets from workspace
-Full_data <- lapply(list.files(path = here("workspace"), pattern = ".csv", full.names = TRUE),read.csv)
-names(Full_data) <- c("ArchData", "all_fruit_data","ShootData") #assigning them names
+# taking all data sets from workspace
+# Full_data <- lapply(list.files(path = here("workspace"), pattern = "data.csv", full.names = TRUE),read.csv)
+# names(Full_data) <- c("all_arch_data", "all_fruit_data","all_shoot_data") #assigning them names
+# 
+# #taking the data frames and placing them in indiviual data set in the global environment
+# lapply(names(Full_data), function(x) assign(x, Full_data[[x]], envir = .GlobalEnv))
 
-#taking the data frames and placing them in indiviual data set in the global environment
-lapply(names(Full_data), function(x) assign(x, Full_data[[x]], envir = .GlobalEnv))
+# changed to use standard import script
+redo <- FALSE
+source(here("code/data_import/import_all_data.R"))
 
 #Fruit data
 all_fruit_data <- all_fruit_data %>% 
@@ -53,7 +59,7 @@ all_fruit_data <- all_fruit_data %>%
 	mutate(ID =paste(SegmentEndY,SegmentEndX,CaneUUID,ParentOriginID,VineUUID,sep="_"))
 
 
-ArchData <- ArchData %>% 
+all_arch_data <- all_arch_data %>% 
 	           mutate(Row = case_when(Quadrant %in% 1:6 ~ 1,
 						              Quadrant %in% 7:12 ~ 2,
 						              Quadrant %in% 13:18 ~ 3,
@@ -71,7 +77,7 @@ all_fruit_data <- all_fruit_data %>%
 	mutate(FloweringDate = lubridate::ymd(FloweringDate),
 		   DaysSinceFlowering =as.numeric(FloweringDate - lubridate::dmy('27-10-2019')) )
 
-all_fruit_data <- left_join(all_fruit_data,ShootData)
+all_fruit_data <- left_join(all_fruit_data,all_shoot_data)
 
 all_fruit_data[which(is.na(lubridate::ymd(all_fruit_data$FloweringDate))),]
 #------------------------------------------------------------------------------------------------------------------------------
@@ -82,7 +88,7 @@ all_fruit_data[which(is.na(lubridate::ymd(all_fruit_data$FloweringDate))),]
 
 
 
-ArchData %>%
+all_arch_data %>%
 	filter(!is.na(SegmentStartX) & !is.na(SegmentStartY) & !is.na(SegmentEndX) & !is.na(SegmentEndY) & VineTreatmentNoNumber %in% c("Conventional","Strung") ) %>%
 	ggplot() +
 	geom_segment(aes(x = SegmentStartY, y = SegmentStartX, xend =  SegmentEndY, yend =  SegmentEndX, size = SegmentDiameter),col="lightgrey") +
@@ -256,6 +262,9 @@ plot(st_geometry(st_as_sf(rSB)))
 plot(xx, coords, add=TRUE, col="red",pch=26,cex=0.5)
 
 #save shapefile
-rgdal::writeOGR(rSB,here("workspace/"),layer="vine_architecture_shapefile", driver="ESRI Shapefile")
+# only write out if files dont already exist
+if(length(list.files(here("workspace"), pattern = "_shapefile.")) < 1) {
+	rgdal::writeOGR(rSB,here("workspace/"),layer="vine_architecture_shapefile", driver="ESRI Shapefile")
+}
 
 write.csv(data.frame(field_names = colnames(rSB@data)),file=here('workspace/fieldnames.csv'),row.names = F)

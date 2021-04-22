@@ -30,11 +30,11 @@ coef(FitPwrVolume)
 
 # plot leaf area vs shoot length
 
-ggplot(leaf_area_data) + geom_point(aes(ShootLength, LeafArea)) + geom_line(aes(ShootLength, predict(FitPwrLength)), colour = "green")
+#ggplot(leaf_area_data) + geom_point(aes(ShootLength, LeafArea)) + geom_line(aes(ShootLength, predict(FitPwrLength)), colour = "green")
 
 
 # plot leaf area vs shoot volume
-ggplot(leaf_area_data) + geom_point(aes(ShootVolume, LeafArea)) + geom_line(aes(ShootVolume, predict(FitPwrVolume)), colour = "green")
+#ggplot(leaf_area_data) + geom_point(aes(ShootVolume, LeafArea)) + geom_line(aes(ShootVolume, predict(FitPwrVolume)), colour = "green")
 
 # Save plots to output folder
 #ggsave("Leaf Area vs shoot length power curve.png", path = here("output"),  dpi = 500)

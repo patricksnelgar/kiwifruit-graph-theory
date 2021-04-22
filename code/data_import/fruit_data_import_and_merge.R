@@ -114,3 +114,5 @@ all_fruit_data <- all_fruit_data %>%
  all_fruit_data %<>%
  	mutate(QuadrantFromLeader = as.factor(QuadrantFromLeader),
  		   QuadrantFromTrunk = as.factor(QuadrantFromTrunk))
+
+ 

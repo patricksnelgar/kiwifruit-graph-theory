@@ -72,12 +72,21 @@ vines_df@data$LeafLoss <- factor(vines_df@data$LeafLoss)
 
 #no spatial effects - random effects on obs only
 m1.f <- meanDM ~  WoodType  +ShootTypeCoarse + f(LeafLoss, model='rw1') + f(ID)
-m1.dm <- inla(m1.f, data=vines_df@data, family="gaussian",control.compute = list(dic = TRUE),
-		   control.fixed=list(prec=0.01)) 
+m1.dm <- inla(m1.f, 
+			  data=vines_df@data, 
+			  family="gaussian",
+			  control.compute = list(dic = TRUE),
+			  control.fixed=list(prec=0.01),
+			  num.threads = detectCores()) 
 
 #no patial effects, but nested random effects
 m2.f <- meanDM ~  WoodType  +ShootTypeCoarse + f(LeafLoss, model='rw1') + f(cane_in_vine) + f(VineUUID)
-m2.dm <- inla(m2.f, data=vines_df@data, family="gaussian",control.compute = list(dic = TRUE),control.fixed=list(prec=0.01) )
+m2.dm <- inla(m2.f, 
+			  data=vines_df@data, 
+			  family="gaussian",
+			  control.compute = list(dic = TRUE),
+			  control.fixed=list(prec=0.01), 
+			  num.threads = detectCores())
 
 
 #spatial priors
@@ -93,15 +102,23 @@ prior <- list(
 #bym model
 m3.f <- meanDM ~  WoodType  +ShootTypeCoarse + f(LeafLoss, model='rw1')+f(cane_in_vine) + 
 	f(VineUUID) + f(idarea, model = "besag", graph =g,scale.model = T )
-m3.dm <- inla(m3.f,data = vines_df@data,control.compute = list(dic = TRUE),
-		   control.predictor = list(compute = TRUE),control.fixed=list(prec=0.01))
+m3.dm <- inla(m3.f,
+			  data = vines_df@data,
+			  control.compute = list(dic = TRUE),
+			  control.predictor = list(compute = TRUE),
+			  control.fixed=list(prec=0.01),
+			  num.threads = detectCores())
 
 #bym2 model
 
 m4.f <- meanDM ~  WoodType  +ShootTypeCoarse + f(LeafLoss, model='rw1')+f(cane_in_vine) + 
 	f(VineUUID) + f(idarea, model = "bym2", graph =g,hyper=prior, scale.model = T )
-m4.dm <- inla(m4.f,data = vines_df@data,control.compute = list(dic = TRUE),
-			  control.predictor = list(compute = TRUE),control.fixed=list(prec=0.1))
+m4.dm <- inla(m4.f,
+			  data = vines_df@data,
+			  control.compute = list(dic = TRUE),
+			  control.predictor = list(compute = TRUE),
+			  control.fixed=list(prec=0.1),
+			  num.threads = detectCores())
 
 m4.dm$summary.fixed
 
@@ -137,60 +154,83 @@ res_plot <- res_plot %>% group_by(VineUUID) %>%
 #Spatial residual
 gridExtra::grid.arrange(
 	ggplot(res_plot %>% filter(vine_type=="conventional"), aes(x=x, y=y , group=CaneUUID,fill=resid_spatial)) + 
-		geom_tile() + facet_grid(~VineUUID,scales="free") + 
+		geom_tile() + 
+		facet_grid(~VineUUID,scales="free") + 
 		theme_classic() + 
 		theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(),
-			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + ggtitle("Vinetype:Conventional"),
+			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + 
+		ggtitle("Vinetype:Conventional"),
 	
 	ggplot(res_plot %>% filter(!vine_type=="conventional"), aes(x=x, y=y , group=CaneUUID,fill=resid_spatial)) + 
-		geom_tile() + facet_grid(~VineUUID,scales="free") + 
+		geom_tile() + 
+		facet_grid(~VineUUID,scales="free") + 
 		theme_classic() + 
 		theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(),
-			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + ggtitle("Vinetype:Spur"),ncol=1)
+			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + 
+		ggtitle("Vinetype:Strung"),ncol=1)
 
 #fitted values
 gridExtra::grid.arrange(
 	ggplot(res_plot %>% filter(vine_type=="conventional"), aes(x=x, y=y , group=CaneUUID,fill=fitted)) + 
-		geom_tile() + facet_grid(~VineUUID,scales="free") + 
+		geom_tile() + 
+		facet_grid(~VineUUID,scales="free") + 
 		theme_classic() + 
 		theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(),
-			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + ggtitle("Vinetype:Conventional"),
+			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + 
+		ggtitle("Vinetype:Conventional"),
 	
 	ggplot(res_plot %>% filter(!vine_type=="conventional"), aes(x=x, y=y , group=CaneUUID,fill=fitted)) + 
-		geom_tile() + facet_grid(~VineUUID,scales="free") + 
+		geom_tile() + 
+		facet_grid(~VineUUID,scales="free") + 
 		theme_classic() + 
 		theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(),
-			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + ggtitle("Vinetype:Spur"),ncol=1)
+			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + 
+		ggtitle("Vinetype:Strung"),ncol=1)
 
 #threshold
 gridExtra::grid.arrange(
 	ggplot(res_plot %>% filter(vine_type=="conventional"), aes(x=x, y=y , group=CaneUUID,fill=DM_threshold)) + 
-		geom_tile() + facet_grid(~VineUUID,scales="free") + 
+		geom_tile() + 
+		facet_grid(~VineUUID,scales="free") + 
 		theme_classic() + 
 		theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(),
-			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + ggtitle("Vinetype:Conventional"),
+			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + 
+		ggtitle("Vinetype:Conventional"),
 	
 	ggplot(res_plot %>% filter(!vine_type=="conventional"), aes(x=x, y=y , group=CaneUUID,fill=DM_threshold)) + 
-		geom_tile() + facet_grid(~VineUUID,scales="free") + 
+		geom_tile() + 
+		facet_grid(~VineUUID,scales="free") + 
 		theme_classic() + 
 		theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(),
-			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + ggtitle("Vinetype:Spur"),ncol=1)
+			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + 
+		ggtitle("Vinetype:Strung"),ncol=1)
 
 #other effects
 m2.dm$summary.random$VineUUID %>% 
-	ggplot(., aes(x=ID, y = mean)) + geom_point() +geom_linerange(aes(ymin=`0.025quant`, ymax= `0.975quant`)) + 
-	theme_bw() + geom_hline(yintercept = 0, linetype='dashed')
+	ggplot(., aes(x=ID, y = mean)) +
+	geom_point() +
+	geom_linerange(aes(ymin=`0.025quant`, ymax= `0.975quant`)) + 
+	theme_bw() + 
+	geom_hline(yintercept = 0, linetype='dashed')
 
 m2.dm$summary.random$LeafLoss%>% 
-	ggplot(., aes(x=ID, y = mean)) + geom_line() + geom_line() + 
+	ggplot(., aes(x=ID, y = mean)) + 
+	geom_point() + 
+	geom_line() + 
 	geom_linerange(aes(ymin=`0.025quant`, ymax= `0.975quant`)) + 
-	theme_bw() + geom_hline(yintercept = 0, linetype='dashed')
+	theme_bw() + 
+	geom_hline(yintercept = 0, linetype='dashed')
 
 
-m2.dm$summary.fixed[2:5,]%>% 
-	ggplot(., aes(x=ID, y = mean)) + geom_line() + geom_line() + 
-	geom_linerange(aes(ymin=`0.025quant`, ymax= `0.975quant`)) + 
-	theme_bw() + geom_hline(yintercept = 0, linetype='dashed')
+m2.dm$summary.fixed%>%
+	mutate(type = row.names(m2.dm$summary.fixed)) %>%
+	filter(row_number() %in% 2:5) %>%
+	ggplot(., aes(x=type, y = mean)) + 
+	geom_point() + 
+	geom_line() +
+	geom_linerange(aes(ymin=`0.025quant`, ymax= `0.975quant`)) +
+	theme_bw() + 
+	geom_hline(yintercept = 0, linetype='dashed')
 
 #------------------------------------------------------------------------------------------------------------------------------
 
@@ -206,25 +246,43 @@ m2.dm$summary.fixed[2:5,]%>%
 
 #no spatial effects - random effects on obs only
 m1.f <- meanFW ~ DaysSinceFlowering  +ShootTypeCoarse  + f(ID)
-m1.fw <- inla(m1.f, data=vines_df@data, family="gaussian",control.compute = list(dic = TRUE),control.fixed=list(prec=0.1) )
+m1.fw <- inla(m1.f, 
+			  data=vines_df@data, 
+			  family="gaussian",
+			  control.compute = list(dic = TRUE),
+			  control.fixed=list(prec=0.1),
+			  num.threads = detectCores())
 
 #no patial effects, but nested random effects
 m2.f <- meanFW ~ DaysSinceFlowering  +ShootTypeCoarse + + f(cane_in_vine) + f(VineUUID)
-m2.fw <- inla(m2.f, data=vines_df@data, family="gaussian",control.compute = list(dic = TRUE),control.fixed=list(prec=0.1))
+m2.fw <- inla(m2.f, 
+			  data=vines_df@data, 
+			  family="gaussian",
+			  control.compute = list(dic = TRUE),
+			  control.fixed=list(prec=0.1),
+			  num.threads = detectCores())
 
 #bym model
 m3.f <- meanFW ~ DaysSinceFlowering  +ShootTypeCoarse + +f(cane_in_vine) + 
 	f(VineUUID) + f(idarea, model = "besag", graph =g,scale.model = T )
-m3.fw <- inla(m3.f,data = vines_df@data,control.compute = list(dic = TRUE),
-		   control.predictor = list(compute = TRUE),control.fixed=list(prec=0.1))
+m3.fw <- inla(m3.f,
+			  data = vines_df@data,
+			  control.compute = list(dic = TRUE),
+			  control.predictor = list(compute = TRUE),
+			  control.fixed=list(prec=0.1),
+			  num.threads = detectCores())
 
 
 #bym2 model
 
 m4.f <- meanFW ~ DaysSinceFlowering  +ShootTypeCoarse + f(cane_in_vine) + 
 	f(VineUUID) + f(idarea, model = "bym2", graph =g,scale.model = T,hyper=prior )
-m4.fw <- inla(m4.f,data = vines_df@data,control.compute = list(dic = TRUE),
-			  control.predictor = list(compute = TRUE),control.fixed=list(prec=0.1))
+m4.fw <- inla(m4.f,
+			  data = vines_df@data,
+			  control.compute = list(dic = TRUE),
+			  control.predictor = list(compute = TRUE),
+			  control.fixed=list(prec=0.1),
+			  num.threads = detectCores())
 
 
 summary(m4.dm)
@@ -274,7 +332,7 @@ gridExtra::grid.arrange(
 		geom_tile() + facet_grid(~VineUUID,scales="free") + 
 		theme_classic() + 
 		theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(),
-			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + ggtitle("Vinetype:Spur"),ncol=1)
+			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + ggtitle("Vinetype:Strung"),ncol=1)
 
 #freshweight thresholds
 gridExtra::grid.arrange(
@@ -288,7 +346,7 @@ gridExtra::grid.arrange(
 		geom_tile() + facet_grid(~VineUUID,scales="free") + 
 		theme_classic() + 
 		theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank(),
-			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + ggtitle("Vinetype:Spur"),ncol=1)
+			  legend.position = "bottom") + scale_fill_viridis_c(direction = -1) + ggtitle("Vinetype:Strung"),ncol=1)
 
 
 #other random effects

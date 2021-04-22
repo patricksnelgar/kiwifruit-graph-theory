@@ -63,79 +63,12 @@ flowering_dates <- read_csv(here("input/flowering_dates.csv")) %>%
 ```
 
 ```{r vine_data_import, echo = FALSE}
-redo <- TRUE
+redo <- FALSE
 
-
-
-if(!file.exists(
-	c(here("workspace/all_fruit_data.csv"), 
-	  here("workspace/all_arch_data.csv"), 
-	  here("workspace/all_shoot_data.csv"))) || redo){
-	
-	source(here("code/data_import/import_all_data.R"))
+source(here("code/data_import/import_all_data.R"))
 
 	
-	write_csv(all_fruit_data, here("workspace/all_fruit_data.csv"), na = "")
-	write_csv(all_arch_data, here("workspace/all_arch_data.csv"), na = "")
-	write_csv(all_shoot_data, here("workspace/all_shoot_data.csv"), na = "")
-	
-} else {
-	# Need to set column types for all as only the first 1000 rows are used for
-	# imputing types which doesnt work for scarce columns (seed counts etc.)
 
-	all_fruit_data <- read_csv(here("workspace/all_fruit_data.csv"), col_types = "dddccccddcDcddddddddddddddddccc")
-	all_arch_data <- read_csv(here("workspace/all_arch_data.csv"), col_types = "dddccccdddddddddcc")
-	all_shoot_data <- read_csv(here("workspace/all_shoot_data.csv"), col_types = "dcdddcccccdc")
-}
-
-
-	# Factors that allow for fixing vine positions in grid plots
-	all_arch_data %<>%
-		mutate(VineTreatmentOrder = factor(VineUUID, levels = c(1, 2, 3, 4, 6, 5, 9, 8, 7)),
-			   VineTreatment = ifelse(VineUUID %in% c(1, 4, 9), "1 Conv", 
-			   					   ifelse(VineUUID %in% c(2, 6, 8), "2 Stru",
-			   					   	   ifelse(VineUUID %in% c(3, 5, 7), "3 Spur", NA))),
-
-			  	VineRow = ifelse(VineUUID %in% c(1:3), 1,
-			   				 ifelse(VineUUID %in% c(4:6), 2,
-			   				 	   ifelse(VineUUID %in% c(7:9), 3, NA)))) 
-	
-	
-
-	# Pull in x&y coords to shoot and fruit data frames
-		
-	all_shoot_data %<>%
-		left_join(select(all_arch_data, ShootUUID, SegmentStartX, SegmentStartY,SegmentEndX, SegmentEndY))
-
-	all_fruit_data %<>%
-		left_join(select(all_arch_data, ShootUUID, SegmentEndX, SegmentEndY))
-
-	# Factors that allow for fixing vine positions in grid plots
-	# and 'binning' fruit metrics for visual display
-	all_fruit_data %<>%
-		mutate(VineTreatmentOrder = factor(VineUUID, levels = c(1, 2, 3, 4, 6, 5, 9, 8, 7)),
-		   	   VineTreatment = ifelse(VineUUID %in% c(1, 4, 9), "1 Conv", 
-		   					   ifelse(VineUUID %in% c(2, 6, 8), "2 Stru",
-		   					   ifelse(VineUUID %in% c(3, 5, 7), "3 Spur", NA))),
-		   	   VineRow = ifelse(VineUUID %in% c(1:3), 1,
-		   				 ifelse(VineUUID %in% c(4:6), 2,
-		   				 ifelse(VineUUID %in% c(7:9), 3, NA)))) %>%
-		mutate(dm_bins = cut(DryMatter, c(0,14:23,30), 
-							 include.lowest = TRUE, 
-							 labels = c("< 14", paste(14:22, "to", 15:23), "> 23")),
-		   	   fw_bins = cut(FreshWeight, c(0, 74, 84, 95, 108, 118, 128, 138, 151, 180, 210, 240), 
-		   			         include.lowest = TRUE, 
-		   			  		 right = FALSE,
-		   			  		 labels = c("< 74g", paste("count", c(42, 39, 36, 33, 30, 27, 25, 22, 18, 16)))),
-		       hue_bins = cut(HueAngle1, seq(0, 120, 5), 
-		       			  	  labels = paste(seq(0, 115, 5), "to", seq(5, 120, 5))),
-
-			   ssc_bins = cut(SolubleSolidsContent, seq(5, 20, 1.5), 
-			   			      include.lowest = TRUE, 
-			   			      labels = paste(seq(5, 18.5, 1.5), "to", seq(6.5, 20, 1.5))),
-		       firm_bins = cut(Firmness1, seq(0, 11, 1), 
-		       				   include.lowest = TRUE, 
-		       				   labels = paste(0:10, "to", 1:11)))
 
 ```
 
